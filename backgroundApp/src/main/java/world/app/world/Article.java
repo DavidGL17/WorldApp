@@ -10,7 +10,6 @@ import world.app.world.articles.Character;
 import world.app.world.articles.*;
 import world.app.world.articles.events.Accord;
 import world.app.world.articles.events.AccordType;
-import world.app.world.articles.Side;
 import world.app.world.articles.events.War;
 
 import java.sql.*;

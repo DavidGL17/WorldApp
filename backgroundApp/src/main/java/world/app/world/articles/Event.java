@@ -26,11 +26,6 @@ public abstract class Event extends Article {
       return super.toString() + ", startDate : " + startDate + ", endDate : " + endDate;
    }
 
-   @Override
-   public boolean endModifications() {
-      return super.endModifications();
-   }
-
    public Date getEndDate() {
       return endDate;
    }

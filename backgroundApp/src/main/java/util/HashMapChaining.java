@@ -158,8 +158,7 @@ public class HashMapChaining<T> implements Iterable<T> {
       if (this == o) { return true; }
       if (!(o instanceof HashMapChaining)) { return false; }
       HashMapChaining<?> that = (HashMapChaining<?>) o;
-      return defaultMaxSize == that.defaultMaxSize && maxSizeOfTab == that.maxSizeOfTab &&
-             currentSize == that.currentSize && Objects.equals(map, that.map);
+      return maxSizeOfTab == that.maxSizeOfTab && currentSize == that.currentSize && Objects.equals(map, that.map);
    }
 
    @Override
@@ -233,7 +232,7 @@ public class HashMapChaining<T> implements Iterable<T> {
       /**
        * The Current list iterator.
        */
-      Iterator<LinkedList<T>> currentListIterator = map.iterator();
+      final Iterator<LinkedList<T>> currentListIterator = map.iterator();
       /**
        * The Current list.
        */
@@ -246,10 +245,7 @@ public class HashMapChaining<T> implements Iterable<T> {
 
       @Override
       public boolean hasNext() {
-         if (currentElementIterator != null && currentElementIterator.hasNext() || currentListIterator.hasNext()) {
-            return true;
-         }
-         return false;
+         return currentElementIterator != null && currentElementIterator.hasNext() || currentListIterator.hasNext();
       }
 
       @Override

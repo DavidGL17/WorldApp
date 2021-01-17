@@ -12,7 +12,7 @@ import world.app.world.World;
 import java.sql.Date;
 
 public class Continent extends Article {
-   private HashMapChaining<Country> countries;
+   private final HashMapChaining<Country> countries;
 
    public Continent(int id, World world, String name, String content, Date lastUpdate,
                     HashMapChaining<Country> countries) {

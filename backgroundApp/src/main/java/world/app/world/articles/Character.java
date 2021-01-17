@@ -17,9 +17,9 @@ import java.util.ArrayList;
 
 public class Character extends Article {
    private Race race;
-   private HashMapChaining<Language> languages;
-   private ArrayList<Language> languagesDeleted = new ArrayList<>();
-   private ArrayList<Article> languagesAdded = new ArrayList<Article>();
+   private final HashMapChaining<Language> languages;
+   private final ArrayList<Language> languagesDeleted = new ArrayList<>();
+   private final ArrayList<Article> languagesAdded = new ArrayList<>();
 
    public Character(int id, World world, String name, String content, Date lastUpdate, Race race,
                     HashMapChaining<Language> languages) {

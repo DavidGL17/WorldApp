@@ -16,7 +16,7 @@ import java.sql.SQLException;
 
 public class Alphabet extends Article {
    private String writingSystem;
-   private HashMapChaining<Language> languages;
+   private final HashMapChaining<Language> languages;
 
    public Alphabet(int id, World world, String name, String content, Date lastUpdate, String writingSystem) {
       super(id, world, name, content, lastUpdate, TypeOfArticle.ALPHABET);
@@ -36,7 +36,7 @@ public class Alphabet extends Article {
 
    @Override
    public String toString() {
-      return super.toString() + ", writingSystem : '" + writingSystem + "\'}";
+      return super.toString() + ", writingSystem : '" + writingSystem + "'}";
    }
 
    @Override

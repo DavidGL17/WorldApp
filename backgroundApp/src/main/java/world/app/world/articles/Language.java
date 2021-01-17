@@ -16,7 +16,7 @@ import java.sql.SQLException;
 
 public class Language extends Article {
    private Alphabet alphabet;
-   private HashMapChaining<Race> races;
+   private final HashMapChaining<Race> races;
 
    public Language(int id, World world, String name, String content, Date lastUpdate, Alphabet alphabet,
                    HashMapChaining<Race> races) {

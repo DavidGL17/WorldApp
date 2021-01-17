@@ -69,7 +69,7 @@ public class Race extends Article {
    }
 
    public void setHeightMax(int heightMax) {
-      if (heightMax <= 0 && heightMax >= heightMax && isInModification()) {
+      if (heightMax <= 0 && heightMax >= heighMin && isInModification()) {
          this.heightMax = heightMax;
          setUpdateIsNeeded();
       }

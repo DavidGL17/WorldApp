@@ -15,9 +15,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 public class Legend extends Article {
-   private HashMapChaining<Race> races;
-   private ArrayList<Article> racesAdded = new ArrayList<>();
-   private ArrayList<Article> racesDeleted = new ArrayList<>();
+   private final HashMapChaining<Race> races;
+   private final ArrayList<Article> racesAdded = new ArrayList<>();
+   private final ArrayList<Article> racesDeleted = new ArrayList<>();
 
    public Legend(int id, World world, String name, String content, Date lastUpdate, HashMapChaining<Race> races) {
       super(id, world, name, content, lastUpdate, TypeOfArticle.LEGEND);

@@ -17,9 +17,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 public class Side extends Article {
-   private HashMapChaining<Country> countries;
-   private ArrayList<Country> countriesDeleted = new ArrayList<>();
-   private ArrayList<Article> coutriesAdded = new ArrayList<>();
+   private final HashMapChaining<Country> countries;
+   private final ArrayList<Country> countriesDeleted = new ArrayList<>();
+   private final ArrayList<Article> coutriesAdded = new ArrayList<>();
 
    public Side(int id, World world, String name, String content, Date lastUpdate, HashMapChaining<Country> countries) {
       super(id, world, name, content, lastUpdate, TypeOfArticle.SIDE);

@@ -10,10 +10,7 @@ import world.app.world.articles.Event;
 import world.app.world.articles.Side;
 import world.app.world.articles.TypeOfArticle;
 
-import java.sql.Connection;
 import java.sql.Date;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
 
 public class War extends Event {
    private int deathCount;
@@ -31,30 +28,6 @@ public class War extends Event {
    @Override
    public String toString() {
       return super.toString() + ", deathCount : " + deathCount + '}';
-   }
-
-   @Override
-   public boolean endModifications() {
-      if (isUpdateNeeded()) {
-         try {
-            Connection connection = getWorld().getUser().getConnection();
-            PreparedStatement statement = connection.prepareStatement(
-                    "UPDATE worldproject.war SET datebeginning=?, dateend=?, deathcount=?, idside1=?, idside2=? " +
-                    "WHERE idarticle=?");
-            statement.setDate(1, getStartDate());
-            statement.setDate(2, getEndDate());
-            statement.setInt(3, deathCount);
-            statement.setInt(4, side1.getId());
-            statement.setInt(5, side2.getId());
-            statement.setInt(6, getId());
-            statement.execute();
-         } catch (SQLException throwables) {
-            throwables.printStackTrace();
-            System.err.println("Error while saving changes of article");
-            return false;
-         }
-      }
-      return super.endModifications();
    }
 
    public int getDeathCount() {

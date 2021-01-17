@@ -10,13 +10,10 @@ import world.app.world.Article;
 import world.app.world.World;
 import world.app.world.articles.TypeOfArticle;
 
-import java.sql.Connection;
 import java.sql.Date;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
 
 public class AccordType extends Article {
-   private HashMapChaining<Accord> accords;
+   private final HashMapChaining<Accord> accords;
 
    public AccordType(int id, World world, String name, String content, Date lastUpdate) {
       super(id, world, name, content, lastUpdate, TypeOfArticle.ACCORD_TYPE);
