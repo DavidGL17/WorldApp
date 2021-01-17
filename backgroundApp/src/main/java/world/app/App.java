@@ -5,6 +5,7 @@
  */
 package world.app;
 
+import util.HashMapChaining;
 import world.app.user.User;
 import world.app.world.Article;
 import world.app.world.World;
@@ -15,14 +16,11 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 //Le launcher fournira toutes les méthodes nécessaire a l'interface graphique
-//TODO le laucncher est construit, puis lancé avec une méthode start qui lui donne son utilisateur. Si l'id de
-// l'utilisateur
-// apssé en paramètre est 0, il demande la création d'un user
+
 public class App {
    private User user;
 
    public App(int userId) {
-
       try {
          Connection connection = DriverManager.getConnection(Util.connectionString);
          user = new User(userId, connection);
@@ -43,7 +41,7 @@ public class App {
 
    public static void main(String[] args) {
       App app = new App(1);
-      ArrayList<World> worlds = app.getWorlds();
+      HashMapChaining<World> worlds = app.getWorlds();
       for (World w : worlds) {
          System.out.println(w);
          w.loadArticles();
@@ -53,7 +51,7 @@ public class App {
       }
    }
 
-   public ArrayList<World> getWorlds() {
+   public HashMapChaining<World> getWorlds() {
       return user.getWorlds();
    }
 

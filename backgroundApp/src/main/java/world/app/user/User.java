@@ -5,13 +5,13 @@
  */
 package world.app.user;
 
+import util.HashMapChaining;
 import world.app.world.World;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Objects;
 
 /**
@@ -20,7 +20,7 @@ import java.util.Objects;
 //Utilisateur, connecté a un certain nombre de mondes
 public class User {
    private final int id;
-   private final ArrayList<World> worlds = new ArrayList<>();
+   private final HashMapChaining<World> worlds = new HashMapChaining<>();
    private String firstName;
    private String lastName;
    private String email;
@@ -108,8 +108,19 @@ public class User {
     *
     * @return the worlds owned by the user
     */
-   public ArrayList<World> getWorlds() {
+   public HashMapChaining<World> getWorlds() {
       return worlds;
+   }
+
+   /**
+    * Gets a specific world
+    *
+    * @param id the id of this specific world
+    *
+    * @return the world with this specific id, or null if the user has no world with this id
+    */
+   public World getWorld(int id) {
+      return worlds.find(id);
    }
 
    /**
@@ -190,6 +201,22 @@ public class User {
    }
 
    /**
+    * Checks if the worldName is not already used in another world associated to the user
+    *
+    * @param worldName the name of the world to check
+    *
+    * @return true if there is no world with this name, false otherwise
+    */
+   public boolean checkWorldName(String worldName) {
+      for (World world : worlds) {
+         if (world.getName().equals(worldName)) {
+            return false;
+         }
+      }
+      return true;
+   }
+
+   /**
     * Loads the articles of the given world
     *
     * @param worldName the name of the world
@@ -219,19 +246,5 @@ public class User {
       } catch (SQLException throwables) {
          throwables.printStackTrace();
       }
-   }
-
-   /**
-    * Checks if the worldName is not already used in another world associated to the user
-    * @param worldName the name of the world to check
-    * @return true if there is no world with this name, false otherwise
-    */
-   public boolean checkWorldName(String worldName) {
-      for (World world : worlds) {
-         if (world.getName().equals(worldName)) {
-            return false;
-         }
-      }
-      return true;
    }
 }

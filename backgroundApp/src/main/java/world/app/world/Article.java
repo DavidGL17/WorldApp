@@ -14,7 +14,6 @@ import world.app.world.articles.events.War;
 
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.Objects;
 
 //TODO reimplémenter equals dans chaque sous-classe et start et stopModification
 
@@ -442,10 +441,6 @@ public abstract class Article implements Modifiable {
       return updateNeeded;
    }
 
-   protected void setUpdateIsNeeded() {
-      this.updateNeeded = true;
-   }
-
    /**
     * Gets the id of the article
     *
@@ -516,7 +511,7 @@ public abstract class Article implements Modifiable {
 
    @Override
    public int hashCode() {
-      return Objects.hash(getId());
+      return getId();
    }
 
    @Override
@@ -565,5 +560,9 @@ public abstract class Article implements Modifiable {
       }
       inModification = false;
       return true;
+   }
+
+   protected void setUpdateIsNeeded() {
+      this.updateNeeded = true;
    }
 }

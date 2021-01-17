@@ -171,7 +171,7 @@ public class World implements Modifiable {
 
    @Override
    public int hashCode() {
-      return Objects.hash(getId());
+      return getId();
    }
 
    @Override
