@@ -1,0 +1,30 @@
+plugins {
+    id 'java'
+
+    id 'org.openjfx.javafxplugin'
+
+
+}
+
+apply plugin: "org.openjfx.javafxplugin"
+
+javafx {
+    version = "15.0.1"
+    modules = ["javafx.base", "javafx.controls", "javafx.graphics", "javafx.fxml"]
+}
+group 'world.app'
+version '0.2'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation project(':backgroundApp')
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+}
+
+test {
+    useJUnitPlatform()
+}

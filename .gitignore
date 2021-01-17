@@ -1,0 +1,14 @@
+
+target/
+
+.idea/
+
+src/main/java/world/app/Util.java
+
+backgroundApp/src/main/java/world/app/Util.java
+
+backgroundApp/out/
+
+.gradle/
+
+build/
