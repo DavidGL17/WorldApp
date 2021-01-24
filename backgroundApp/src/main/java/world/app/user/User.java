@@ -30,23 +30,31 @@ public class User {
     * Instantiates a new User.
     *
     * @param id         the id of the user
+    * @param password   the password
     * @param connection the connection to the database
+    *
+    * @throws UserIdNotFoundException the user id not found exception
+    * @throws WrongPasswordException  the wrong password exception
     */
-   public User(int id, Connection connection) {
+   public User(int id, String password, Connection connection) throws UserIdNotFoundException, WrongPasswordException {
       this.id = id;
       try {
          this.connection = connection;
          PreparedStatement statement = connection.prepareStatement(
-                 "SELECT firstName,lastName,email FROM worldproject.user_account" + " u " + "WHERE u.id = ?");
+                 "SELECT firstName,lastName,email,password FROM worldproject.user_account u WHERE u.id = ?");
          statement.setInt(1, id);
          ResultSet resultSet = statement.executeQuery();
          if (resultSet.next()) {
-            this.firstName = resultSet.getString("firstName");
-            this.lastName = resultSet.getString("lastName");
-            this.email = resultSet.getString("email");
-            loadWorlds();
+            if (resultSet.getString("password").equals(password)) {
+               this.firstName = resultSet.getString("firstName");
+               this.lastName = resultSet.getString("lastName");
+               this.email = resultSet.getString("email");
+               loadWorlds();
+            } else {
+               throw new WrongPasswordException("Wrong password");
+            }
          } else {
-            throw new IllegalArgumentException("no user with this id");
+            throw new UserIdNotFoundException("no user with this id");
          }
       } catch (SQLException throwables) {
          throwables.printStackTrace();
@@ -61,24 +69,24 @@ public class User {
     * @param firstName  the first name of the user
     * @param lastName   the last name of the user
     * @param email      the email of the user
+    * @param password   the password
     *
     * @return the id of the new user
+    *
+    * @throws SQLException the sql exception
     */
-   public static int createUser(Connection connection, String firstName, String lastName, String email) {
-      int id = 0;
-      try {
-         PreparedStatement statement = connection.prepareStatement(
-                 "INSERT INTO worldproject.user_account(email, firstName, lastName) VALUES (?,?,?) RETURNING id;");
-         statement.setString(1, email);
-         statement.setString(2, firstName);
-         statement.setString(3, lastName);
-         ResultSet resultSet = statement.executeQuery();
-         resultSet.next();
-         id = resultSet.getInt(1);
-      } catch (SQLException throwables) {
-         throwables.printStackTrace();
-      }
-      return id;
+   public static int createUser(Connection connection, String firstName, String lastName, String email, String password)
+           throws SQLException {
+      PreparedStatement statement = connection.prepareStatement(
+              "INSERT INTO worldproject.user_account(email, firstName, lastName, password) VALUES (?,?,?,?) " +
+              "RETURNING " + "id;");
+      statement.setString(1, email);
+      statement.setString(2, firstName);
+      statement.setString(3, lastName);
+      statement.setString(4, password);
+      ResultSet resultSet = statement.executeQuery();
+      resultSet.next();
+      return resultSet.getInt(1);
    }
 
    @Override
@@ -245,6 +253,34 @@ public class User {
          }
       } catch (SQLException throwables) {
          throwables.printStackTrace();
+      }
+   }
+
+   /**
+    * The type User id not found exception.
+    */
+   public class UserIdNotFoundException extends Exception {
+      /**
+       * Instantiates a new User id not found exception.
+       *
+       * @param message the message
+       */
+      public UserIdNotFoundException(String message) {
+         super(message);
+      }
+   }
+
+   /**
+    * The type Wrong password exception.
+    */
+   public class WrongPasswordException extends Exception {
+      /**
+       * Instantiates a new Wrong password exception.
+       *
+       * @param message the message
+       */
+      public WrongPasswordException(String message) {
+         super(message);
       }
    }
 }

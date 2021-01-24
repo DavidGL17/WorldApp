@@ -13,34 +13,28 @@ import world.app.world.World;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.ArrayList;
 
 //Le launcher fournira toutes les méthodes nécessaire a l'interface graphique
 
 public class App {
    private User user;
 
-   public App(int userId) {
-      try {
-         Connection connection = DriverManager.getConnection(Util.connectionString);
-         user = new User(userId, connection);
-      } catch (SQLException throwables) {
-         throwables.printStackTrace();
-      }
+   public App(int userId, String password)
+           throws User.WrongPasswordException, User.UserIdNotFoundException, SQLException {
+      Connection connection = DriverManager.getConnection(Util.connectionString);
+      user = new User(userId, password, connection);
    }
 
-   public App(String firstName, String lastName, String email) {
-      try {
-         Connection connection = DriverManager.getConnection(Util.connectionString);
-         int userId = addUser(connection, firstName, lastName, email);
-         user = new User(userId, connection);
-      } catch (SQLException throwables) {
-         throwables.printStackTrace();
-      }
+   public App(String firstName, String lastName, String email, String password)
+           throws User.WrongPasswordException, User.UserIdNotFoundException, SQLException {
+      Connection connection = DriverManager.getConnection(Util.connectionString);
+      int userId = User.createUser(connection, firstName, lastName, email, password);
+      user = new User(userId, password, connection);
    }
 
-   public static void main(String[] args) {
-      App app = new App(1);
+   public static void main(String[] args)
+           throws User.UserIdNotFoundException, User.WrongPasswordException, SQLException {
+      App app = new App(1, "1234");
       HashMapChaining<World> worlds = app.getWorlds();
       for (World w : worlds) {
          System.out.println(w);
@@ -58,9 +52,4 @@ public class App {
    public void addWorld(String name) {
       user.createWorld(name);
    }
-
-   private int addUser(Connection connection, String firstName, String lastName, String email) {
-      return User.createUser(connection, firstName, lastName, email);
-   }
-
 }
