@@ -10,7 +10,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
@@ -20,6 +19,7 @@ import javafx.scene.text.TextAlignment;
 import javafx.scene.text.TextFlow;
 import javafx.stage.Stage;
 import ui.Controller;
+import ui.util.Util;
 import world.app.App;
 import world.app.user.User;
 
@@ -27,12 +27,10 @@ import java.io.IOException;
 import java.sql.SQLException;
 
 public class LoginViewController extends Controller {
+   private final Text welcomeText;
+   private final Text indicationText;
+   private final Text copyrightText;
    private Scene scene;
-   private Text welcomeText;
-   private Text indicationText;
-   private Text copyrightText;
-
-
    @FXML private TextFlow WelcomeMessageTextField;
    @FXML private TextFlow StandardCopyrightTextFlow;
 
@@ -62,6 +60,8 @@ public class LoginViewController extends Controller {
       StandardCopyrightTextFlow.getChildren().add(copyrightText);
       StandardCopyrightTextFlow.setTextAlignment(TextAlignment.CENTER);
 
+      UserIdTextField.clear();
+      PasswordTextField.clear();
       UserIdTextField.requestFocus();
 
       primaryStage.setScene(scene);
@@ -75,12 +75,19 @@ public class LoginViewController extends Controller {
    }
 
    @FXML
-   private void initialize() {
-
-   }
-
-   @FXML
    void createUser(ActionEvent event) {
+      try {
+         FXMLLoader createUserLoader = new FXMLLoader();
+         createUserLoader.setLocation(getClass().getClassLoader().getResource("views/createUser.fxml"));
+         Scene createUserScene = new Scene(createUserLoader.load());
+         CreateUserController createUserController = createUserLoader.getController();
+         createUserController.setScene(createUserScene);
+         createUserController.setLoginViewController(this);
+
+         createUserController.load((Stage) WelcomeMessageTextField.getScene().getWindow());
+      } catch (IOException e) {
+         e.printStackTrace();
+      }
       //TODO load createUser controller
    }
 
@@ -99,31 +106,15 @@ public class LoginViewController extends Controller {
          mainViewController.load((Stage) WelcomeMessageTextField.getScene().getWindow());
       } catch (User.WrongPasswordException e) {
          e.printStackTrace();
-         Alert alert = new Alert(Alert.AlertType.ERROR);
-         alert.setTitle("Wrong password");
-         alert.setHeaderText("Wrong password");
-         alert.setContentText("The password you entered is false, please try again");
-         ((Stage) alert.getDialogPane().getScene().getWindow()).getIcons().add(new Image("images/mainImage.jpg"));
-
-         alert.showAndWait();
+         Util.createAlertFrame(Alert.AlertType.ERROR, "Wrong password", "Wrong password",
+                               "The password you entered is false, please try again");
       } catch (User.UserIdNotFoundException e) {
          e.printStackTrace();
-         Alert alert = new Alert(Alert.AlertType.ERROR);
-         alert.setTitle("Wrong id");
-         alert.setHeaderText("Wrong id");
-         alert.setContentText("The id you entered is not registered");
-         ((Stage) alert.getDialogPane().getScene().getWindow()).getIcons().add(new Image("images/mainImage.jpg"));
-
-         alert.showAndWait();
-      } catch (SQLException throwables) {
-         throwables.printStackTrace();
-         Alert alert = new Alert(Alert.AlertType.ERROR);
-         alert.setTitle("Connection Error");
-         alert.setHeaderText("Connection Error");
-         alert.setContentText("Could not open the connection to the Database, please try again");
-         ((Stage) alert.getDialogPane().getScene().getWindow()).getIcons().add(new Image("images/mainImage.jpg"));
-
-         alert.showAndWait();
+         Util.createAlertFrame(Alert.AlertType.ERROR, "Wrong id", "Wrong id", "The id you entered is not registered");
+      } catch (SQLException throwable) {
+         throwable.printStackTrace();
+         Util.createAlertFrame(Alert.AlertType.ERROR, "Connection Error", "Connection Error",
+                               "Could not open the connection to the Database, please try again");
       } catch (IOException e) {
          e.printStackTrace();
       }

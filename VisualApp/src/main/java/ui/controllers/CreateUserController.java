@@ -6,7 +6,9 @@
 package ui.controllers;
 
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
@@ -17,10 +19,17 @@ import javafx.scene.text.TextAlignment;
 import javafx.scene.text.TextFlow;
 import javafx.stage.Stage;
 import ui.Controller;
+import ui.util.Util;
+import world.app.App;
+import world.app.user.User;
+
+import java.io.IOException;
+import java.sql.SQLException;
 
 public class CreateUserController extends Controller {
    private Scene scene;
    private Text welcomeText;
+   private LoginViewController loginViewController;
 
    @FXML private TextFlow TFWelcomeMessage;
 
@@ -33,7 +42,7 @@ public class CreateUserController extends Controller {
    @FXML private PasswordField PFPasswordUser;
 
    public CreateUserController() {
-      welcomeText.setText("Please enter your account information in the fields bellow");
+      welcomeText = new Text("Please enter your account information in the fields bellow");
       welcomeText.setFont(Font.font(16));
    }
 
@@ -53,14 +62,48 @@ public class CreateUserController extends Controller {
       this.scene = scene;
    }
 
+   public void setLoginViewController(LoginViewController loginViewController) {
+      this.loginViewController = loginViewController;
+   }
 
    @FXML
    void onClickedCancel(MouseEvent event) {
-
+      loginViewController.load((Stage) TFWelcomeMessage.getScene().getWindow());
    }
 
    @FXML
    void onClickedCreateUser(MouseEvent event) {
+      if (!TFirstNameUser.getText().isBlank() && !TLastNameUser.getText().isBlank() &&
+          !TEmailUser.getText().isBlank() && !PFPasswordUser.getText().isBlank()) {
+         try {
+            App app = new App(TFirstNameUser.getText(), TLastNameUser.getText(), TEmailUser.getText(),
+                              PFPasswordUser.getText());
+            FXMLLoader menuLoader = new FXMLLoader();
+            menuLoader.setLocation(getClass().getClassLoader().getResource("views/mainView.fxml"));
+            Scene menuScene = new Scene(menuLoader.load());
+            MainViewController mainViewController = menuLoader.getController();
+            mainViewController.setScene(menuScene);
+            mainViewController.setApp(app);
 
+            mainViewController.load((Stage) TFWelcomeMessage.getScene().getWindow());
+         } catch (User.UserIdNotFoundException | User.WrongPasswordException e) {
+            e.printStackTrace();
+            Util.createAlertFrame(Alert.AlertType.ERROR, "Error while creating the user",
+                                  "Error while creating the user",
+                                  "There has been an error while creating you user account. Please check you are" +
+                                  " correctly connected to internet before trying again. If the problem persists, " +
+                                  "please contact the developper of the app");
+         } catch (SQLException throwables) {
+            throwables.printStackTrace();
+            Util.createAlertFrame(Alert.AlertType.ERROR, "Connection error", "Connection Error",
+                                  "Could not open the connection to the Database, please try again");
+         } catch (IOException e) {
+            e.printStackTrace();
+         }
+      } else {
+         Util.createAlertFrame(Alert.AlertType.INFORMATION, "Login information incomplete",
+                               "You have not filled all the required fields",
+                               "You have not filled all the required fields. Please do so before trying again.");
+      }
    }
 }
