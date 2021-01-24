@@ -10,7 +10,7 @@ apply plugin: "org.openjfx.javafxplugin"
 
 javafx {
     version = "15.0.1"
-    modules = ["javafx.base", "javafx.controls", "javafx.graphics"]
+    modules = ["javafx.base", "javafx.controls", "javafx.graphics", "javafx.fxml"]
 }
 group 'world.app'
 version '0.2'

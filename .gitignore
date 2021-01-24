@@ -22,3 +22,5 @@ out/
 VisualApp/build/
 
 backgroundApp/src/main/java/world/app/Util.java
+
+build/
