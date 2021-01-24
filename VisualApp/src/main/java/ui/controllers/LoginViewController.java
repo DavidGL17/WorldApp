@@ -50,16 +50,18 @@ public class LoginViewController extends Controller {
                                "be for non-profit objectives.");
    }
 
-   @Override
-   public void load(Stage primaryStage) {
-      //Welcome messages
+   @FXML
+   public void initialize(){
       WelcomeMessageTextField.getChildren().add(welcomeText);
       WelcomeMessageTextField.getChildren().add(indicationText);
       WelcomeMessageTextField.setTextAlignment(TextAlignment.CENTER);
 
       StandardCopyrightTextFlow.getChildren().add(copyrightText);
       StandardCopyrightTextFlow.setTextAlignment(TextAlignment.CENTER);
+   }
 
+   @Override
+   public void load(Stage primaryStage) {
       UserIdTextField.clear();
       PasswordTextField.clear();
       UserIdTextField.requestFocus();

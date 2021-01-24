@@ -1,35 +1,90 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.TextFlow?>
 
-<VBox prefHeight="400.0" prefWidth="640.0" xmlns="http://javafx.com/javafx/15.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.controllers.LoginViewController">
-  <children>
-    <AnchorPane maxHeight="-1.0" maxWidth="-1.0" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/15.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.controllers.LoginViewController">
+   <top>
+      <TextFlow fx:id="WelcomeMessageTextField" prefHeight="128.0" prefWidth="600.0" BorderPane.alignment="CENTER" />
+   </top>
+   <center>
+      <GridPane BorderPane.alignment="CENTER">
+        <columnConstraints>
+          <ColumnConstraints hgrow="SOMETIMES" maxWidth="295.0" minWidth="10.0" prefWidth="126.0" />
+          <ColumnConstraints hgrow="SOMETIMES" maxWidth="499.0" minWidth="10.0" prefWidth="474.0" />
+        </columnConstraints>
+        <rowConstraints>
+          <RowConstraints maxHeight="84.0" minHeight="10.0" prefHeight="84.0" vgrow="SOMETIMES" />
+          <RowConstraints maxHeight="100.0" minHeight="10.0" prefHeight="70.0" vgrow="SOMETIMES" />
+          <RowConstraints maxHeight="69.0" minHeight="10.0" prefHeight="48.0" vgrow="SOMETIMES" />
+        </rowConstraints>
          <children>
-            <TextFlow fx:id="WelcomeMessageTextField" accessibleText="Hey" disable="true" lineSpacing="1.0" prefHeight="121.0" prefWidth="640.0" textAlignment="CENTER" AnchorPane.bottomAnchor="279.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-            <PasswordField fx:id="PasswordTextField" layoutX="136.0" layoutY="200.0" prefHeight="25.0" prefWidth="436.0" AnchorPane.bottomAnchor="175.0" AnchorPane.leftAnchor="136.0" AnchorPane.rightAnchor="68.0" AnchorPane.topAnchor="200.0" />
-            <TextField fx:id="UserIdTextField" layoutX="136.0" layoutY="154.0" prefHeight="25.0" prefWidth="436.0" AnchorPane.bottomAnchor="221.0" AnchorPane.leftAnchor="136.0" AnchorPane.rightAnchor="68.0" AnchorPane.topAnchor="154.0" />
-            <Label layoutX="48.0" layoutY="153.0" text="User Id" AnchorPane.bottomAnchor="220.0" AnchorPane.leftAnchor="48.0" AnchorPane.rightAnchor="536.0" AnchorPane.topAnchor="153.0">
+            <PasswordField fx:id="PasswordTextField" prefHeight="25.0" prefWidth="319.0" promptText="Password" GridPane.columnIndex="1" GridPane.rowIndex="1">
+               <opaqueInsets>
+                  <Insets />
+               </opaqueInsets>
+               <GridPane.margin>
+                  <Insets bottom="10.0" left="10.0" right="20.0" top="10.0" />
+               </GridPane.margin>
+            </PasswordField>
+            <TextField fx:id="UserIdTextField" promptText="User id" GridPane.columnIndex="1">
+               <GridPane.margin>
+                  <Insets bottom="10.0" left="10.0" right="20.0" top="10.0" />
+               </GridPane.margin>
+            </TextField>
+            <Label text="User Id" GridPane.halignment="CENTER">
                <font>
                   <Font size="18.0" />
                </font>
             </Label>
-            <Label layoutX="35.0" layoutY="199.0" prefHeight="27.0" prefWidth="83.0" text="Password" AnchorPane.bottomAnchor="174.0" AnchorPane.leftAnchor="35.0" AnchorPane.rightAnchor="522.0" AnchorPane.topAnchor="199.0">
+            <Label text="Password" GridPane.halignment="CENTER" GridPane.rowIndex="1">
                <font>
                   <Font size="18.0" />
                </font>
             </Label>
-            <Button layoutX="433.0" layoutY="286.0" mnemonicParsing="false" onAction="#login" text="Login" AnchorPane.bottomAnchor="89.0" AnchorPane.leftAnchor="433.0" AnchorPane.rightAnchor="161.0" AnchorPane.topAnchor="286.0" />
-            <Button layoutX="176.0" layoutY="286.0" mnemonicParsing="false" onAction="#createUser" prefHeight="25.0" prefWidth="112.0" text="Create new User" AnchorPane.bottomAnchor="89.0" AnchorPane.leftAnchor="176.0" AnchorPane.rightAnchor="352.0" AnchorPane.topAnchor="286.0" />
-            <TextFlow fx:id="StandardCopyrightTextFlow" disable="true" layoutY="360.0" prefHeight="40.0" prefWidth="644.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
+            <GridPane prefHeight="37.0" prefWidth="474.0" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER">
+              <columnConstraints>
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+              </columnConstraints>
+              <rowConstraints>
+                <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="TOP" vgrow="SOMETIMES" />
+              </rowConstraints>
+               <children>
+                  <Button mnemonicParsing="false" onAction="#createUser" text="Create new User" GridPane.halignment="CENTER">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <GridPane.margin>
+                        <Insets />
+                     </GridPane.margin>
+                  </Button>
+                  <Button mnemonicParsing="false" onAction="#login" text="Login" GridPane.columnIndex="1" GridPane.halignment="CENTER">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <GridPane.margin>
+                        <Insets />
+                     </GridPane.margin>
+                  </Button>
+               </children>
+            </GridPane>
          </children>
-    </AnchorPane>
-  </children>
-</VBox>
+         <opaqueInsets>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="20.0" />
+         </opaqueInsets>
+      </GridPane>
+   </center>
+   <bottom>
+      <TextFlow fx:id="StandardCopyrightTextFlow" prefHeight="39.0" prefWidth="600.0" BorderPane.alignment="CENTER" />
+   </bottom>
+</BorderPane>
