@@ -28,7 +28,7 @@ public class Launcher extends Application {
       loginLoader.setLocation(getClass().getClassLoader().getResource("views/loginView.fxml"));
       Scene loginScene = new Scene(loginLoader.load());
       LoginViewController loginViewController = loginLoader.getController();
-
+      loginViewController.setScene(loginScene);
 
 
       loginViewController.load(primaryStage);

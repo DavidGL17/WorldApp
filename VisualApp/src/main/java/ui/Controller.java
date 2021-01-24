@@ -5,6 +5,7 @@
  */
 package ui;
 
+import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 public abstract class Controller {
@@ -15,4 +16,6 @@ public abstract class Controller {
     * @param primaryStage the stage to change the view
     */
    public abstract void load(Stage primaryStage);
+
+   public abstract void setScene(Scene scene);
 }
