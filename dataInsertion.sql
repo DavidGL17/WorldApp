@@ -48,9 +48,9 @@ ALTER SEQUENCE world_id_seq RESTART WITH 1;
 ALTER SEQUENCE user_account_id_seq RESTART WITH 1;
 
 INSERT INTO
-   user_account(email, firstname, lastname)
+   user_account(email, firstname, lastname, password)
 VALUES
-   ('david.gonzalez@citycable.ch', 'David', 'González León');
+   ('david.gonzalez@citycable.ch', 'David', 'González León', '1234');
 
 INSERT INTO
    world(name, iduser, description)
