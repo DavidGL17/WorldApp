@@ -1,16 +1,24 @@
 
-target/
 
-.idea/
 
-src/main/java/world/app/Util.java
 
-backgroundApp/src/main/java/world/app/Util.java
 
-backgroundApp/out/
+
+
+
 
 .gradle/
 
-build/
+.idea/
 
-VisualApp/out/
+backgroundApp/build/
+
+backgroundApp/out/
+
+libs/
+
+out/
+
+VisualApp/build/
+
+backgroundApp/src/main/java/world/app/Util.java

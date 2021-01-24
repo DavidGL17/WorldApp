@@ -491,6 +491,10 @@ public abstract class Article implements Modifiable {
       }
    }
 
+
+   void test(){
+
+   }
    /**
     * Gets last update.
     *

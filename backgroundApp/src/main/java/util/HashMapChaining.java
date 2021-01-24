@@ -190,12 +190,12 @@ public class HashMapChaining<T> implements Iterable<T> {
     * Resize.
     */
    private void resize() {
-      if (currentSize / maxSizeOfTab <= 2) {
+      if (currentSize / maxSizeOfTab < 2) {
          if (maxSizeOfTab == 1) {
             return;
          }
          maxSizeOfTab /= 2;
-      } else if (currentSize / maxSizeOfTab >= 8) {
+      } else if (currentSize / maxSizeOfTab >= 6) {
          maxSizeOfTab *= 2;
       } else {
          return;
