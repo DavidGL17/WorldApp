@@ -51,7 +51,7 @@ public class Accord extends Event {
    }
 
    public HashMapChaining<Country> getCountries() {
-      return countries.copy();
+      return countries;
    }
 
    public void addCountry(Country country) {

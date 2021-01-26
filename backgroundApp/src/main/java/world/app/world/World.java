@@ -50,6 +50,7 @@ public class World implements Modifiable {
          this.name = name;
          this.id = resultSet.getInt("id");
          this.description = resultSet.getString("description");
+         loadArticles();
       } catch (SQLException throwables) {
          throwables.printStackTrace();
          System.err.println("Error while creating world");
@@ -142,7 +143,7 @@ public class World implements Modifiable {
     * @return a copy of articles
     */
    public HashMapChaining<Article> getArticles() {
-      return articles.copy();
+      return articles;
    }
 
    public void startModifications() {

@@ -142,10 +142,19 @@ public class HashMapChaining<T> implements Iterable<T> {
     */
    public HashMapChaining<T> copy() {
       HashMapChaining<T> newMap = new HashMapChaining<>();
+
       for (T t : this) {
          newMap.add(t);
       }
       return newMap;
+   }
+
+   public ArrayList<T> toList() {
+      ArrayList<T> list = new ArrayList<>();
+      for (T t : this) {
+         list.add(t);
+      }
+      return list;
    }
 
    @Override
@@ -242,21 +251,23 @@ public class HashMapChaining<T> implements Iterable<T> {
        */
       Iterator<T> currentElementIterator = null;
 
+      private int currentElementNumber = 0;
 
       @Override
       public boolean hasNext() {
-         return currentElementIterator != null && currentElementIterator.hasNext() || currentListIterator.hasNext();
+         return currentElementNumber<size();
       }
 
       @Override
       public T next() {
+         ++currentElementNumber;
          if (currentElementIterator != null && currentElementIterator.hasNext()) {
             return currentElementIterator.next();
          } else if (currentListIterator.hasNext()) {
             do {
                currentList = currentListIterator.next();
                currentElementIterator = currentList.iterator();
-            } while (!currentElementIterator.hasNext());
+            } while (!currentElementIterator.hasNext() && currentListIterator.hasNext());
             return currentElementIterator.next();
          }
          throw new NoSuchElementException("The iteration is over");

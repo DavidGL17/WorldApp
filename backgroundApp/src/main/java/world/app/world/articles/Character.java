@@ -40,7 +40,7 @@ public class Character extends Article {
    }
 
    public HashMapChaining<Language> getLanguages() {
-      return languages.copy();
+      return languages;
    }
 
    public void addLanguage(Language language) {
