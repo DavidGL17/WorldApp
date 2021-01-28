@@ -6,5 +6,18 @@
 package world.app.world.articles;
 
 public enum TypeOfArticle {
-   ACCORD, ACCORD_TYPE, ALPHABET, CHARACTER, CONTINENT, COUNTRY, LANGUAGE, LEGEND, RACE, RANK, SIDE, WAR
+   ACCORD("Accord"), ACCORD_TYPE("Accord type"), ALPHABET("Alphabet"), CHARACTER("Character"), CONTINENT("Continent"),
+   COUNTRY("Country"), LANGUAGE("Language"), LEGEND("Legend"), RACE("Race"), RANK("Rank"), SIDE("Side"), WAR("War");
+
+
+   private String name;
+
+   TypeOfArticle(String name) {
+      this.name = name;
+   }
+
+   @Override
+   public String toString() {
+      return name;
+   }
 }

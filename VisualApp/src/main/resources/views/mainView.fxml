@@ -52,17 +52,44 @@
                               <Insets bottom="10.0" left="10.0" right="20.0" top="10.0" />
                            </VBox.margin>
                         </ButtonBar>
-                        <TableView fx:id="TWorld" onMouseClicked="#worldTableClicked" prefHeight="477.0" prefWidth="734.0" VBox.vgrow="ALWAYS">
+                        <TableView fx:id="TWSWorld" onMouseClicked="#worldTableClicked" prefHeight="477.0" prefWidth="734.0" VBox.vgrow="ALWAYS">
                           <columns>
-                            <TableColumn fx:id="TCWorldName" prefWidth="161.0" text="World name" />
-                              <TableColumn fx:id="TCNumberOfArticles" prefWidth="154.0" text="Number of articles" />
-                            <TableColumn fx:id="TCDescription" maxWidth="1.7976931348623157E308" minWidth="-Infinity" prefWidth="999.0" text="Description" />
+                            <TableColumn fx:id="TCWSWorldName" editable="false" prefWidth="161.0" text="World name" />
+                              <TableColumn fx:id="TCWSNumberOfArticles" editable="false" prefWidth="154.0" text="Number of articles" />
+                            <TableColumn fx:id="TCWSDescription" editable="false" maxWidth="1.7976931348623157E308" minWidth="-Infinity" prefWidth="495.0" text="Description" />
                           </columns>
                         </TableView>
                      </children>
                   </VBox>
                </content>
           </Tab>
+            <Tab fx:id="TOpenedWorld" text="World name">
+               <content>
+                  <VBox prefHeight="200.0" prefWidth="100.0">
+                     <children>
+                        <ButtonBar prefHeight="40.0" prefWidth="200.0">
+                          <buttons>
+                            <Button mnemonicParsing="false" onAction="#addArticle" text="Add Article">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Button>
+                          </buttons>
+                           <padding>
+                              <Insets bottom="10.0" left="10.0" right="20.0" top="10.0" />
+                           </padding>
+                        </ButtonBar>
+                        <TableView fx:id="TOWArticles" prefHeight="511.0" prefWidth="811.0" VBox.vgrow="ALWAYS">
+                          <columns>
+                            <TableColumn fx:id="TOWArticleName" editable="false" prefWidth="122.0" text="Name" />
+                              <TableColumn fx:id="TOWArticleType" editable="false" prefWidth="79.0" text="Type" />
+                            <TableColumn fx:id="TOWArticleDescription" editable="false" prefWidth="440.0" text="Description" />
+                              <TableColumn fx:id="TOWArticleDate" editable="false" minWidth="7.0" prefWidth="169.0" text="Date of last modification" />
+                          </columns>
+                        </TableView>
+                     </children>
+                  </VBox>
+               </content></Tab>
         </tabs>
       </TabPane>
    </children>
