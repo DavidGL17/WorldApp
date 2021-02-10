@@ -153,7 +153,6 @@ CREATE TABLE war (
 
 CREATE TABLE accordType (
    idArticle INTEGER,
-   name      VARCHAR(255),
    CONSTRAINT fk_accordType_idArticle FOREIGN KEY (idArticle) REFERENCES article (id) ON UPDATE CASCADE ON DELETE CASCADE,
    PRIMARY KEY (idArticle)
 );
