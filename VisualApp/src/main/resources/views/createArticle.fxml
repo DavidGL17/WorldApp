@@ -2,6 +2,7 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.BorderPane?>
@@ -10,30 +11,33 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.text.TextFlow?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="400.0" minWidth="600.0" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/15.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.controllers.CreateWorldController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="400.0" minWidth="600.0" prefHeight="511.0" prefWidth="751.0" xmlns="http://javafx.com/javafx/15.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.controllers.CreateArticleController">
    <center>
-      <GridPane prefHeight="240.0" prefWidth="560.0" BorderPane.alignment="CENTER">
+      <GridPane fx:id="GPArticle" prefHeight="422.0" prefWidth="711.0" BorderPane.alignment="CENTER">
         <columnConstraints>
-          <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-          <ColumnConstraints hgrow="SOMETIMES" percentWidth="65.0" />
+            <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" maxWidth="210.20001220703125" minWidth="10.0" />
+          <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" maxWidth="213.60003662109375" minWidth="10.0" />
+          <ColumnConstraints hgrow="ALWAYS" maxWidth="450.4000244140625" minWidth="333.0" percentWidth="50.0" />
         </columnConstraints>
         <rowConstraints>
-          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+          <RowConstraints maxHeight="1.7976931348623157E308" minHeight="10.0" vgrow="ALWAYS" />
+          <RowConstraints maxHeight="1.7976931348623157E308" minHeight="10.0" vgrow="ALWAYS" />
         </rowConstraints>
          <children>
-            <Label text="Name" />
-            <Label text="Description" GridPane.rowIndex="1" />
-            <TextField fx:id="TNameWorld" promptText="Name" GridPane.columnIndex="1">
+            <Label text="Name of the article" GridPane.columnIndex="1" />
+            <Label text="Content of the article" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <TextField fx:id="TNameArticle" prefHeight="25.0" prefWidth="313.0" promptText="Name" GridPane.columnIndex="2">
                <GridPane.margin>
                   <Insets bottom="10.0" left="10.0" right="20.0" top="10.0" />
                </GridPane.margin>
             </TextField>
-            <TextField fx:id="TDescriptionWorld" promptText="Description" GridPane.columnIndex="1" GridPane.rowIndex="1">
+            <TextField fx:id="TDescriptionArticle" promptText="Description" GridPane.columnIndex="2" GridPane.rowIndex="1">
                <GridPane.margin>
                   <Insets bottom="10.0" left="10.0" right="20.0" top="10.0" />
                </GridPane.margin>
             </TextField>
+            <ComboBox fx:id="CBArticleType" prefWidth="150.0" GridPane.rowIndex="1" GridPane.valignment="TOP" />
+            <Label text="Type of Article" textAlignment="JUSTIFY" GridPane.valignment="BOTTOM" />
          </children>
          <BorderPane.margin>
             <Insets left="20.0" right="20.0" />
@@ -41,7 +45,7 @@
       </GridPane>
    </center>
    <bottom>
-      <GridPane BorderPane.alignment="CENTER">
+      <GridPane prefHeight="73.0" prefWidth="751.0" BorderPane.alignment="CENTER">
         <columnConstraints>
           <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
           <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -50,12 +54,12 @@
           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
-            <Button fx:id="BCancelUser" cancelButton="true" mnemonicParsing="false" onAction="#clickedCancel" text="Cancel" GridPane.columnIndex="1">
+            <Button fx:id="BCancelArticle" cancelButton="true" mnemonicParsing="false" onAction="#clickedCancel" text="Cancel" GridPane.columnIndex="1">
                <GridPane.margin>
                   <Insets bottom="20.0" top="20.0" />
                </GridPane.margin>
             </Button>
-            <Button fx:id="BCreateUser" alignment="CENTER" contentDisplay="CENTER" defaultButton="true" mnemonicParsing="false" onAction="#clickedCreateWorld" text="Create">
+            <Button fx:id="BCreateArticle" alignment="CENTER" contentDisplay="CENTER" defaultButton="true" mnemonicParsing="false" onAction="#clickedCreateArticle" text="Create">
                <GridPane.margin>
                   <Insets bottom="20.0" top="20.0" />
                </GridPane.margin>
@@ -70,6 +74,6 @@
       <Insets top="15.0" />
    </padding>
    <top>
-      <TextFlow fx:id="TFWelcomeMessage" prefHeight="97.0" prefWidth="600.0" BorderPane.alignment="CENTER" />
+      <TextFlow fx:id="TFWelcomeMessage" prefHeight="68.0" prefWidth="600.0" BorderPane.alignment="CENTER" />
    </top>
 </BorderPane>
