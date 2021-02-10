@@ -109,10 +109,13 @@ public class MainViewController extends Controller {
       if (event.getButton().equals(MouseButton.PRIMARY)) {
          if (event.getClickCount() == 2) {
             selectedWorld = TWSWorld.getSelectionModel().getSelectedItem();
-            refreshArticleTable();
-            TOpenedWorld.setDisable(false);
-            TOpenedWorld.setText(selectedWorld.getName());
-            TabPaneMainView.getSelectionModel().select(TOpenedWorld);
+            if (selectedWorld!=null) {
+               refreshArticleTable();
+               TOpenedWorld.setDisable(false);
+               TOpenedWorld.setText(selectedWorld.getName());
+               TabPaneMainView.getSelectionModel().select(TOpenedWorld);
+               app.setCurrentWorld(selectedWorld);
+            }
          }
       }
    }
@@ -120,17 +123,17 @@ public class MainViewController extends Controller {
    @FXML
    public void addArticle(ActionEvent event) {
       try {
-         FXMLLoader createWorldLoader = new FXMLLoader();
-         createWorldLoader.setLocation(getClass().getClassLoader().getResource("views/createWorld.fxml"));
-         Scene loginScene = new Scene(createWorldLoader.load());
-         CreateWorldController createWorldController = createWorldLoader.getController();
-         createWorldController.setScene(loginScene);
-         createWorldController.setApp(app);
+         FXMLLoader createArticleLoader = new FXMLLoader();
+         createArticleLoader.setLocation(getClass().getClassLoader().getResource("views/createArticle.fxml"));
+         Scene createArticleScene = new Scene(createArticleLoader.load());
+         CreateArticleController createArticleController = createArticleLoader.getController();
+         createArticleController.setScene(createArticleScene);
+         createArticleController.setApp(app);
 
          Stage stage = new Stage();
          stage.setAlwaysOnTop(true);
-         createWorldController.load(stage);
-         stage.setScene(loginScene);
+         createArticleController.load(stage);
+         stage.setScene(createArticleScene);
          stage.initOwner(TWSWorld.getScene().getWindow());
          stage.initModality(Modality.APPLICATION_MODAL);
          stage.show();
