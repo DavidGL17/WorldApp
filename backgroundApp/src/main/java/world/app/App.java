@@ -69,4 +69,12 @@ public class App {
       }
       return articles;
    }
+
+   public World getCurrentWorld(){
+      return currentWorld;
+   }
+
+   public void addArticle(Article article){
+      currentWorld.getArticles().add(article);
+   }
 }
