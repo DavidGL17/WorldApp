@@ -21,6 +21,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import ui.Controller;
+import ui.util.Util;
 import world.app.App;
 import world.app.world.Article;
 import world.app.world.World;
@@ -89,16 +90,12 @@ public class MainViewController extends Controller {
          createWorldLoader.setLocation(getClass().getClassLoader().getResource("views/createWorld.fxml"));
          Scene loginScene = new Scene(createWorldLoader.load());
          CreateWorldController createWorldController = createWorldLoader.getController();
-         createWorldController.setScene(loginScene);
          createWorldController.setApp(app);
-
-         Stage stage = new Stage();
-         stage.setAlwaysOnTop(true);
-         createWorldController.load(stage);
-         stage.setScene(loginScene);
-         stage.initOwner(TWSWorld.getScene().getWindow());
-         stage.initModality(Modality.APPLICATION_MODAL);
-         stage.show();
+         createWorldController.setScene(loginScene);
+         Stage newStage = Util.createNewWindowOver(createWorldController, loginScene, TWSWorld.getScene().getWindow(),
+                                                   Modality.APPLICATION_MODAL);
+         newStage.showAndWait();
+         refreshWorldTable();
       } catch (IOException e) {
          e.printStackTrace();
       }
@@ -109,7 +106,7 @@ public class MainViewController extends Controller {
       if (event.getButton().equals(MouseButton.PRIMARY)) {
          if (event.getClickCount() == 2) {
             selectedWorld = TWSWorld.getSelectionModel().getSelectedItem();
-            if (selectedWorld!=null) {
+            if (selectedWorld != null) {
                refreshArticleTable();
                TOpenedWorld.setDisable(false);
                TOpenedWorld.setText(selectedWorld.getName());
@@ -127,16 +124,12 @@ public class MainViewController extends Controller {
          createArticleLoader.setLocation(getClass().getClassLoader().getResource("views/createArticle.fxml"));
          Scene createArticleScene = new Scene(createArticleLoader.load());
          CreateArticleController createArticleController = createArticleLoader.getController();
-         createArticleController.setScene(createArticleScene);
          createArticleController.setApp(app);
-
-         Stage stage = new Stage();
-         stage.setAlwaysOnTop(true);
-         createArticleController.load(stage);
-         stage.setScene(createArticleScene);
-         stage.initOwner(TWSWorld.getScene().getWindow());
-         stage.initModality(Modality.APPLICATION_MODAL);
-         stage.show();
+         Stage newStage =
+                 Util.createNewWindowOver(createArticleController, createArticleScene, TWSWorld.getScene().getWindow(),
+                                          Modality.APPLICATION_MODAL);
+         newStage.showAndWait();
+         refreshArticleTable();
       } catch (IOException e) {
          e.printStackTrace();
       }
