@@ -124,7 +124,6 @@ CREATE TABLE rank (
 
 CREATE TABLE side (
    idArticle INTEGER,
-   name      VARCHAR(255),
    CONSTRAINT fk_rank_idArticle FOREIGN KEY (idArticle) REFERENCES article (id) ON UPDATE CASCADE ON DELETE CASCADE,
    PRIMARY KEY (idArticle)
 );
@@ -139,12 +138,12 @@ CREATE TABLE country_side (
 
 CREATE TABLE war (
    idArticle     INTEGER,
-   idSide1       INTEGER NOT NULL,
-   idSide2       INTEGER NOT NULL,
+   idSide1       INTEGER      NOT NULL,
+   idSide2       INTEGER      NOT NULL,
    CHECK (idSide1 != idSide2),
-   dateBeginning DATE    NOT NULL,
-   dateEnd       DATE,
-   CHECK (dateBeginning < dateEnd),
+   dateBeginning VARCHAR(255) NOT NULL,
+   dateEnd       VARCHAR(255),
+   deathCount    INTEGER,
    CONSTRAINT fk_war_idArticle FOREIGN KEY (idArticle) REFERENCES article (id) ON UPDATE CASCADE ON DELETE CASCADE,
    CONSTRAINT fk_war_idSide1 FOREIGN KEY (idSide1) REFERENCES side (idArticle) ON UPDATE CASCADE,
    CONSTRAINT fk_war_idSide2 FOREIGN KEY (idSide2) REFERENCES side (idArticle) ON UPDATE CASCADE,
@@ -159,10 +158,9 @@ CREATE TABLE accordType (
 
 CREATE TABLE accord (
    idArticle     INTEGER,
-   idAccordType  INTEGER NOT NULL,
-   dateBeginning DATE    NOT NULL,
-   dateEnd       DATE,
-   CHECK (dateBeginning < dateEnd),
+   idAccordType  INTEGER      NOT NULL,
+   dateBeginning VARCHAR(255) NOT NULL,
+   dateEnd       VARCHAR(255),
    CONSTRAINT fk_accord_idArticle FOREIGN KEY (idArticle) REFERENCES article (id) ON UPDATE CASCADE ON DELETE CASCADE,
    CONSTRAINT fk_accord_idAccordType FOREIGN KEY (idAccordType) REFERENCES accordType (idArticle) ON UPDATE CASCADE,
    PRIMARY KEY (idArticle)
