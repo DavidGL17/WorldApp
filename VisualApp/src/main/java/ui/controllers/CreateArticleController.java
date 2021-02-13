@@ -11,7 +11,10 @@ import javafx.fxml.FXML;
 import javafx.geometry.VPos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.RowConstraints;
@@ -36,24 +39,18 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class CreateArticleController extends Controller {
-   private Scene scene;
-   private App app;
-
-
-   @FXML private TextFlow TFWelcomeMessage;
    private final Text welcomeText;
    private final Text warningText = new Text();
-
-   @FXML private ComboBox<TypeOfArticle> CBArticleType;
-
-   @FXML private GridPane GPArticle;
-   @FXML private TextField TNameArticle;
-   @FXML private TextField TDescriptionArticle;
    private final ArrayList<TextField> additionalTextFields = new ArrayList<>();
    private final ArrayList<ComboBox<Article>> additionalComboBoxes = new ArrayList<>();
    private final ArrayList<Node> additionalNodes = new ArrayList<>();
-
-
+   private Scene scene;
+   private App app;
+   @FXML private TextFlow TFWelcomeMessage;
+   @FXML private ComboBox<TypeOfArticle> CBArticleType;
+   @FXML private GridPane GPArticle;
+   @FXML private TextField TNameArticle;
+   @FXML private TextField TDescriptionArticle;
    private TypeOfArticle typeOfArticle;
 
    public CreateArticleController() {
@@ -93,7 +90,6 @@ public class CreateArticleController extends Controller {
 
    @FXML
    public void clickedCreateArticle(ActionEvent event) {
-      Article article = null;
       try {
          if (TNameArticle.getText().isBlank() || TDescriptionArticle.getText().isBlank()) {
             throw new IllegalArgumentException("Fill all fields, and don't fill them with blank spaces alone.");
@@ -107,22 +103,26 @@ public class CreateArticleController extends Controller {
                                                      " from the drop down list. (If there are none, try creating an " +
                                                      "accord type first and then create an accord)");
                }
-               article =
-                       Accord.createAccord(app.getCurrentWorld(), TNameArticle.getText(), TDescriptionArticle.getText(),
-                                           additionalComboBoxes.get(0).getSelectionModel().getSelectedItem().getId(),
-                                           additionalTextFields.get(0).getText(),
-                                           additionalTextFields.get(1).getText());
+               Accord.loadAccordIntoWorld(app.getCurrentWorld(),
+                                          Accord.createAccord(app.getCurrentWorld(), TNameArticle.getText(),
+                                                              TDescriptionArticle.getText(),
+                                                              additionalComboBoxes.get(0).getSelectionModel()
+                                                                                  .getSelectedItem().getId(),
+                                                              additionalTextFields.get(0).getText(),
+                                                              additionalTextFields.get(1).getText()));
                break;
             case ACCORD_TYPE:
-               article = AccordType.createAccordType(app.getCurrentWorld(), TNameArticle.getText(),
-                                                     TDescriptionArticle.getText());
+               AccordType.loadArticleTypeIntoWorld(app.getCurrentWorld(), AccordType.createAccordType(
+                       app.getCurrentWorld(), TNameArticle.getText(), TDescriptionArticle.getText()));
                break;
             case ALPHABET:
                if (additionalTextFields.get(0).getText().isBlank()) {
                   throw new IllegalArgumentException("Fill all fields, and don't fill them with blank spaces alone.");
                }
-               article = Alphabet.createAlphabet(app.getCurrentWorld(), TNameArticle.getText(),
-                                                 TDescriptionArticle.getText(), additionalTextFields.get(0).getText());
+               Alphabet.loadAlphabetIntoWorld(app.getCurrentWorld(),
+                                              Alphabet.createAlphabet(app.getCurrentWorld(), TNameArticle.getText(),
+                                                                      TDescriptionArticle.getText(),
+                                                                      additionalTextFields.get(0).getText()));
                break;
             case CHARACTER:
                if (additionalComboBoxes.get(0).getSelectionModel().getSelectedItem() == null) {
@@ -130,14 +130,21 @@ public class CreateArticleController extends Controller {
                                                      " (If there are none, try creating a race first and then create " +
                                                      "a character)");
                }
-               article = Character.createCharacter(app.getCurrentWorld(), TNameArticle.getText(),
-                                                   TDescriptionArticle.getText(),
-                                                   additionalComboBoxes.get(0).getSelectionModel().getSelectedItem()
-                                                                       .getId());
+               Character.loadCharacterIntoWorld(app.getCurrentWorld(), Character.createCharacter(app.getCurrentWorld(),
+                                                                                                 TNameArticle.getText(),
+                                                                                                 TDescriptionArticle
+                                                                                                         .getText(),
+                                                                                                 additionalComboBoxes
+                                                                                                         .get(0)
+                                                                                                         .getSelectionModel()
+                                                                                                         .getSelectedItem()
+                                                                                                         .getId()));
                break;
             case CONTINENT:
-               article = Continent.createContinent(app.getCurrentWorld(), TNameArticle.getText(),
-                                                   TDescriptionArticle.getText());
+               Continent.loadContinentIntoWorld(app.getCurrentWorld(), Continent.createContinent(app.getCurrentWorld(),
+                                                                                                 TNameArticle.getText(),
+                                                                                                 TDescriptionArticle
+                                                                                                         .getText()));
                break;
             case COUNTRY:
                if (additionalComboBoxes.get(0).getSelectionModel().getSelectedItem() == null) {
@@ -145,10 +152,11 @@ public class CreateArticleController extends Controller {
                           "Check you have correctly chosen a continent from the drop down list. (If there are none " +
                           "available, try creating a continent first and then create a country)");
                }
-               article = Country.createCountry(app.getCurrentWorld(), TNameArticle.getText(),
-                                               TDescriptionArticle.getText(),
-                                               additionalComboBoxes.get(0).getSelectionModel().getSelectedItem()
-                                                                   .getId());
+               Country.loadCountryIntoWorld(app.getCurrentWorld(),
+                                            Country.createCountry(app.getCurrentWorld(), TNameArticle.getText(),
+                                                                  TDescriptionArticle.getText(),
+                                                                  additionalComboBoxes.get(0).getSelectionModel()
+                                                                                      .getSelectedItem().getId()));
                break;
             case LANGUAGE:
                if (additionalComboBoxes.get(0).getSelectionModel().getSelectedItem() == null) {
@@ -156,14 +164,16 @@ public class CreateArticleController extends Controller {
                           "Check you have correctly chosen an alphabet from the drop down list. (If there are none " +
                           "available, try creating a alphabet first and then create a language)");
                }
-               article = Language.createLanguage(app.getCurrentWorld(), TNameArticle.getText(),
-                                                 TDescriptionArticle.getText(),
-                                                 additionalComboBoxes.get(0).getSelectionModel().getSelectedItem()
-                                                                     .getId());
+               Language.loadLanguageIntoWorld(app.getCurrentWorld(),
+                                              Language.createLanguage(app.getCurrentWorld(), TNameArticle.getText(),
+                                                                      TDescriptionArticle.getText(),
+                                                                      additionalComboBoxes.get(0).getSelectionModel()
+                                                                                          .getSelectedItem().getId()));
                break;
             case LEGEND:
-               article = Legend.createLegend(app.getCurrentWorld(), TNameArticle.getText(),
-                                             TDescriptionArticle.getText());
+               Legend.loadLegendIntoWorld(app.getCurrentWorld(),
+                                          Legend.createLegend(app.getCurrentWorld(), TNameArticle.getText(),
+                                                              TDescriptionArticle.getText()));
                break;
             case RACE:
                try {
@@ -184,10 +194,13 @@ public class CreateArticleController extends Controller {
                   throw new IllegalArgumentException(
                           "The values given for the minimum and maximum heights must both be numbers.");
                }
-               article = Race.createRace(app.getCurrentWorld(), TNameArticle.getText(), TDescriptionArticle.getText(),
-                                         additionalComboBoxes.get(0).getSelectionModel().getSelectedItem().getId(),
-                                         Integer.parseInt(additionalTextFields.get(0).getText()),
-                                         Integer.parseInt(additionalTextFields.get(1).getText()));
+               Race.loadRaceIntoWorld(app.getCurrentWorld(),
+                                      Race.createRace(app.getCurrentWorld(), TNameArticle.getText(),
+                                                      TDescriptionArticle.getText(),
+                                                      additionalComboBoxes.get(0).getSelectionModel().getSelectedItem()
+                                                                          .getId(),
+                                                      Integer.parseInt(additionalTextFields.get(0).getText()),
+                                                      Integer.parseInt(additionalTextFields.get(1).getText())));
                break;
             case RANK:
                try {
@@ -205,13 +218,18 @@ public class CreateArticleController extends Controller {
                } catch (NumberFormatException exception) {
                   throw new IllegalArgumentException("The value given for the salary must be a number.");
                }
-               article = Rank.createRank(app.getCurrentWorld(), TNameArticle.getText(), TDescriptionArticle.getText(),
-                                         additionalComboBoxes.get(0).getSelectionModel().getSelectedItem().getId(),
-                                         Double.parseDouble(additionalTextFields.get(0).getText()),
-                                         additionalTextFields.get(1).getText());
+               Rank.loadRankIntoWorld(app.getCurrentWorld(),
+                                      Rank.createRank(app.getCurrentWorld(), TNameArticle.getText(),
+                                                      TDescriptionArticle.getText(),
+                                                      additionalComboBoxes.get(0).getSelectionModel().getSelectedItem()
+                                                                          .getId(),
+                                                      Double.parseDouble(additionalTextFields.get(0).getText()),
+                                                      additionalTextFields.get(1).getText()));
                break;
             case SIDE:
-               article = Side.createSide(app.getCurrentWorld(), TNameArticle.getText(), TDescriptionArticle.getText());
+               Side.loadSideIntoWorld(app.getCurrentWorld(),
+                                      Side.createSide(app.getCurrentWorld(), TNameArticle.getText(),
+                                                      TDescriptionArticle.getText()));
                break;
             case WAR:
                try {
@@ -235,18 +253,23 @@ public class CreateArticleController extends Controller {
                } catch (NumberFormatException exception) {
                   throw new IllegalArgumentException("The value given for the death count needs to be a number.");
                }
-               article = War.createWar(app.getCurrentWorld(), TNameArticle.getText(), TDescriptionArticle.getText(),
-                                       additionalComboBoxes.get(0).getSelectionModel().getSelectedItem().getId(),
-                                       additionalComboBoxes.get(1).getSelectionModel().getSelectedItem().getId(),
-                                       additionalTextFields.get(0).getText(), additionalTextFields.get(1).getText(),
-                                       Integer.parseInt(additionalTextFields.get(2).getText()));
+               War.loadWarIntoWorld(app.getCurrentWorld(), War.createWar(app.getCurrentWorld(), TNameArticle.getText(),
+                                                                         TDescriptionArticle.getText(),
+                                                                         additionalComboBoxes.get(0).getSelectionModel()
+                                                                                             .getSelectedItem().getId(),
+                                                                         additionalComboBoxes.get(1).getSelectionModel()
+                                                                                             .getSelectedItem().getId(),
+                                                                         additionalTextFields.get(0).getText(),
+                                                                         additionalTextFields.get(1).getText(),
+                                                                         Integer.parseInt(additionalTextFields.get(2)
+                                                                                                              .getText())));
                break;
             default:
                break;
          }
-         app.addArticle(article);
-         //((Stage) TNameArticle.getScene().getWindow()).close();
+         ((Stage) TNameArticle.getScene().getWindow()).close();
       } catch (SQLException exception) {
+         exception.printStackTrace();
          Util.createAlertFrame(Alert.AlertType.ERROR, "Error in article creation", "Error in article creation",
                                "There was an error while creating your Article, please check you are correctly " +
                                "connected to the Internet and try again. If the problem persists, please contact " +
