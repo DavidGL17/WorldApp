@@ -11,21 +11,27 @@ import javafx.fxml.FXML;
 import javafx.geometry.VPos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.RowConstraints;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
 import javafx.scene.text.TextFlow;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
 import ui.Controller;
+import ui.util.Util;
 import world.app.App;
 import world.app.world.Article;
-import world.app.world.articles.TypeOfArticle;
+import world.app.world.articles.Character;
+import world.app.world.articles.*;
+import world.app.world.articles.events.Accord;
+import world.app.world.articles.events.AccordType;
+import world.app.world.articles.events.War;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -35,19 +41,26 @@ public class CreateArticleController extends Controller {
 
 
    @FXML private TextFlow TFWelcomeMessage;
+   private final Text welcomeText;
+   private final Text warningText = new Text();
+
    @FXML private ComboBox<TypeOfArticle> CBArticleType;
 
    @FXML private GridPane GPArticle;
    @FXML private TextField TNameArticle;
    @FXML private TextField TDescriptionArticle;
-   private ArrayList<TextField> additionalTextFields = new ArrayList<>();
-   private ArrayList<ComboBox<Article>> additionalComboBoxes = new ArrayList<>();
-   private ArrayList<Node> additionalNodes = new ArrayList<>();
+   private final ArrayList<TextField> additionalTextFields = new ArrayList<>();
+   private final ArrayList<ComboBox<Article>> additionalComboBoxes = new ArrayList<>();
+   private final ArrayList<Node> additionalNodes = new ArrayList<>();
 
-   @FXML private Button BCancelArticle;
-   @FXML private Button BCreateArticle;
 
    private TypeOfArticle typeOfArticle;
+
+   public CreateArticleController() {
+      welcomeText = new Text("Please choose the type of article first, and then fill the fields that will appear.");
+      welcomeText.setFont(Font.font(16));
+      warningText.setFont(Font.font(14));
+   }
 
    public void setApp(App app) {
       this.app = app;
@@ -55,12 +68,17 @@ public class CreateArticleController extends Controller {
 
    @Override
    public void load(Stage primaryStage) {
+      TFWelcomeMessage.getChildren().add(welcomeText);
+      TFWelcomeMessage.getChildren().add(warningText);
+      TFWelcomeMessage.setTextAlignment(TextAlignment.CENTER);
+
       CBArticleType.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
          removeContentFromArticleType();
          this.typeOfArticle = newValue;
          setContentToArticleType(newValue);
       });
       CBArticleType.setItems(FXCollections.observableList(Arrays.asList(TypeOfArticle.values())));
+      primaryStage.setScene(scene);
    }
 
    @Override
@@ -70,12 +88,172 @@ public class CreateArticleController extends Controller {
 
    @FXML
    public void clickedCancel(ActionEvent event) {
-      ((Stage)GPArticle.getScene().getWindow()).close();
+      ((Stage) GPArticle.getScene().getWindow()).close();
    }
 
    @FXML
    public void clickedCreateArticle(ActionEvent event) {
-
+      Article article = null;
+      try {
+         if (TNameArticle.getText().isBlank() || TDescriptionArticle.getText().isBlank()) {
+            throw new IllegalArgumentException("Fill all fields, and don't fill them with blank spaces alone.");
+         }
+         switch (typeOfArticle) {
+            case ACCORD:
+               if (additionalComboBoxes.get(0).getSelectionModel().getSelectedItem() == null ||
+                   additionalTextFields.get(0).getText().isBlank() || additionalTextFields.get(1).getText().isBlank()) {
+                  throw new IllegalArgumentException("Fill all fields, and don't fill them with blank spaces alone. " +
+                                                     "If you have then check you have correctly chosen an accord type" +
+                                                     " from the drop down list. (If there are none, try creating an " +
+                                                     "accord type first and then create an accord)");
+               }
+               article =
+                       Accord.createAccord(app.getCurrentWorld(), TNameArticle.getText(), TDescriptionArticle.getText(),
+                                           additionalComboBoxes.get(0).getSelectionModel().getSelectedItem().getId(),
+                                           additionalTextFields.get(0).getText(),
+                                           additionalTextFields.get(1).getText());
+               break;
+            case ACCORD_TYPE:
+               article = AccordType.createAccordType(app.getCurrentWorld(), TNameArticle.getText(),
+                                                     TDescriptionArticle.getText());
+               break;
+            case ALPHABET:
+               if (additionalTextFields.get(0).getText().isBlank()) {
+                  throw new IllegalArgumentException("Fill all fields, and don't fill them with blank spaces alone.");
+               }
+               article = Alphabet.createAlphabet(app.getCurrentWorld(), TNameArticle.getText(),
+                                                 TDescriptionArticle.getText(), additionalTextFields.get(0).getText());
+               break;
+            case CHARACTER:
+               if (additionalComboBoxes.get(0).getSelectionModel().getSelectedItem() == null) {
+                  throw new IllegalArgumentException("Check you have correctly chosen a race from the drop down list." +
+                                                     " (If there are none, try creating a race first and then create " +
+                                                     "a character)");
+               }
+               article = Character.createCharacter(app.getCurrentWorld(), TNameArticle.getText(),
+                                                   TDescriptionArticle.getText(),
+                                                   additionalComboBoxes.get(0).getSelectionModel().getSelectedItem()
+                                                                       .getId());
+               break;
+            case CONTINENT:
+               article = Continent.createContinent(app.getCurrentWorld(), TNameArticle.getText(),
+                                                   TDescriptionArticle.getText());
+               break;
+            case COUNTRY:
+               if (additionalComboBoxes.get(0).getSelectionModel().getSelectedItem() == null) {
+                  throw new IllegalArgumentException(
+                          "Check you have correctly chosen a continent from the drop down list. (If there are none " +
+                          "available, try creating a continent first and then create a country)");
+               }
+               article = Country.createCountry(app.getCurrentWorld(), TNameArticle.getText(),
+                                               TDescriptionArticle.getText(),
+                                               additionalComboBoxes.get(0).getSelectionModel().getSelectedItem()
+                                                                   .getId());
+               break;
+            case LANGUAGE:
+               if (additionalComboBoxes.get(0).getSelectionModel().getSelectedItem() == null) {
+                  throw new IllegalArgumentException(
+                          "Check you have correctly chosen an alphabet from the drop down list. (If there are none " +
+                          "available, try creating a alphabet first and then create a language)");
+               }
+               article = Language.createLanguage(app.getCurrentWorld(), TNameArticle.getText(),
+                                                 TDescriptionArticle.getText(),
+                                                 additionalComboBoxes.get(0).getSelectionModel().getSelectedItem()
+                                                                     .getId());
+               break;
+            case LEGEND:
+               article = Legend.createLegend(app.getCurrentWorld(), TNameArticle.getText(),
+                                             TDescriptionArticle.getText());
+               break;
+            case RACE:
+               try {
+                  if (additionalComboBoxes.get(0).getSelectionModel().getSelectedItem() == null ||
+                      additionalTextFields.get(0).getText().isBlank() ||
+                      additionalTextFields.get(1).getText().isBlank()) {
+                     throw new IllegalArgumentException(
+                             "Fill all fields, and don't fill them with blank spaces alone. If you have then check " +
+                             "you have correctly chosen a language from the drop down list. (If there are none " +
+                             "available, try creating a language first and then create a race)");
+                  }
+                  if (Integer.parseInt(additionalTextFields.get(0).getText()) >=
+                      Integer.parseInt(additionalTextFields.get(1).getText())) {
+                     throw new IllegalArgumentException(
+                             "The minimum height can't be bigger or equal to the maximum height.");
+                  }
+               } catch (NumberFormatException exception) {
+                  throw new IllegalArgumentException(
+                          "The values given for the minimum and maximum heights must both be numbers.");
+               }
+               article = Race.createRace(app.getCurrentWorld(), TNameArticle.getText(), TDescriptionArticle.getText(),
+                                         additionalComboBoxes.get(0).getSelectionModel().getSelectedItem().getId(),
+                                         Integer.parseInt(additionalTextFields.get(0).getText()),
+                                         Integer.parseInt(additionalTextFields.get(1).getText()));
+               break;
+            case RANK:
+               try {
+                  if (additionalComboBoxes.get(0).getSelectionModel().getSelectedItem() == null ||
+                      additionalTextFields.get(0).getText().isBlank() ||
+                      additionalTextFields.get(1).getText().isBlank()) {
+                     throw new IllegalArgumentException(
+                             "Fill all fields, and don't fill them with blank spaces alone. If you have then check " +
+                             "you have correctly chosen a country from the drop down list. (If there are none " +
+                             "available, try creating a country first and then create a rank)");
+                  }
+                  if (Double.parseDouble(additionalTextFields.get(0).getText()) < 0) {
+                     throw new IllegalArgumentException("The value given for the salary cannot be smaller than zero.");
+                  }
+               } catch (NumberFormatException exception) {
+                  throw new IllegalArgumentException("The value given for the salary must be a number.");
+               }
+               article = Rank.createRank(app.getCurrentWorld(), TNameArticle.getText(), TDescriptionArticle.getText(),
+                                         additionalComboBoxes.get(0).getSelectionModel().getSelectedItem().getId(),
+                                         Double.parseDouble(additionalTextFields.get(0).getText()),
+                                         additionalTextFields.get(1).getText());
+               break;
+            case SIDE:
+               article = Side.createSide(app.getCurrentWorld(), TNameArticle.getText(), TDescriptionArticle.getText());
+               break;
+            case WAR:
+               try {
+                  if (additionalComboBoxes.get(0).getSelectionModel().getSelectedItem() == null ||
+                      additionalComboBoxes.get(1).getSelectionModel().getSelectedItem() == null ||
+                      additionalTextFields.get(0).getText().isBlank() ||
+                      additionalTextFields.get(1).getText().isBlank() ||
+                      additionalTextFields.get(2).getText().isBlank()) {
+                     throw new IllegalArgumentException(
+                             "Fill all fields, and don't fill them with blank spaces alone. If you have then check " +
+                             "you have correctly chosen Sides from the drop down lists. (If there are none " +
+                             "available, try creating two Sides first and then create a war)");
+                  }
+                  if (Integer.parseInt(additionalTextFields.get(2).getText()) < 0) {
+                     throw new IllegalArgumentException("The death count can't be a negative number.");
+                  }
+                  if (additionalComboBoxes.get(0).getSelectionModel().getSelectedItem()
+                                          .equals(additionalComboBoxes.get(1).getSelectionModel().getSelectedItem())) {
+                     throw new IllegalArgumentException("The two sides of the war must be different.");
+                  }
+               } catch (NumberFormatException exception) {
+                  throw new IllegalArgumentException("The value given for the death count needs to be a number.");
+               }
+               article = War.createWar(app.getCurrentWorld(), TNameArticle.getText(), TDescriptionArticle.getText(),
+                                       additionalComboBoxes.get(0).getSelectionModel().getSelectedItem().getId(),
+                                       additionalComboBoxes.get(1).getSelectionModel().getSelectedItem().getId(),
+                                       additionalTextFields.get(0).getText(), additionalTextFields.get(1).getText(),
+                                       Integer.parseInt(additionalTextFields.get(2).getText()));
+               break;
+            default:
+               break;
+         }
+         app.addArticle(article);
+         //((Stage) TNameArticle.getScene().getWindow()).close();
+      } catch (SQLException exception) {
+         Util.createAlertFrame(Alert.AlertType.ERROR, "Error in article creation", "Error in article creation",
+                               "There was an error while creating your Article, please check you are correctly " +
+                               "connected to the Internet and try again. If the problem persists, please contact " +
+                               "support.");
+      } catch (IllegalArgumentException exception) {
+         warningText.setText("\nThere were some issues with the values given.\n" + exception.getMessage());
+      }
    }
 
    private void setContentToArticleType(TypeOfArticle articleType) {
@@ -163,7 +341,7 @@ public class CreateArticleController extends Controller {
 
    private ComboBox<Article> createComboBox(ArrayList<Article> articles) {
       ComboBox<Article> comboBox = new ComboBox<>();
-      comboBox.setConverter(new StringConverter<Article>() {
+      comboBox.setConverter(new StringConverter<>() {
          @Override
          public String toString(Article object) {
             if (object != null) {
@@ -207,6 +385,5 @@ public class CreateArticleController extends Controller {
       while (GPArticle.getRowConstraints().size() > 2) {
          GPArticle.getRowConstraints().remove(2);
       }
-      System.out.println("Size : " + GPArticle.getRowConstraints().size());
    }
 }
