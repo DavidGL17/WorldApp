@@ -11,10 +11,10 @@ import world.app.world.World;
 import java.sql.Date;
 
 public abstract class Event extends Article {
-   private Date startDate;
-   private Date endDate;
+   private String startDate;
+   private String endDate;
 
-   public Event(int id, World world, String name, String content, Date lastUpdate, Date startDate, Date endDate,
+   public Event(int id, World world, String name, String content, Date lastUpdate, String startDate, String endDate,
                 TypeOfArticle type) {
       super(id, world, name, content, lastUpdate, type);
       this.startDate = startDate;
@@ -26,22 +26,22 @@ public abstract class Event extends Article {
       return super.toString() + ", startDate : " + startDate + ", endDate : " + endDate;
    }
 
-   public Date getEndDate() {
+   public String getEndDate() {
       return endDate;
    }
 
-   public void setEndDate(Date endDate) {
+   public void setEndDate(String endDate) {
       if (endDate != null && isInModification()) {
          this.endDate = endDate;
          setUpdateIsNeeded();
       }
    }
 
-   public Date getStartDate() {
+   public String getStartDate() {
       return startDate;
    }
 
-   public void setStartDate(Date startDate) {
+   public void setStartDate(String startDate) {
       if (startDate != null && isInModification()) {
          this.startDate = startDate;
          setUpdateIsNeeded();

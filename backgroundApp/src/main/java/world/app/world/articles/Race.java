@@ -5,13 +5,11 @@
  */
 package world.app.world.articles;
 
+import util.HashMapChaining;
 import world.app.world.Article;
 import world.app.world.World;
 
-import java.sql.Connection;
-import java.sql.Date;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
+import java.sql.*;
 
 public class Race extends Article {
    private int heighMin;
@@ -51,6 +49,46 @@ public class Race extends Article {
          }
       }
       return super.endModifications();
+   }
+
+   public static void loadRaceIntoWorld(World world, int id) throws SQLException {
+      HashMapChaining<Article> articles = world.getArticles();
+      if (articles.find(id) != null) {
+         return;
+      }
+      PreparedStatement statement = world.getUser().getConnection().prepareStatement(
+              "SELECT * FROM worldproject.article a INNER JOIN worldproject.race r ON a.id = r.idArticle WHERE " +
+              "a.id = ? AND a.idWorld=?");
+      statement.setInt(1, id);
+      statement.setInt(2, world.getId());
+      ResultSet resultSet = statement.executeQuery();
+      if (resultSet.next()) {
+         articles.add(new Race(resultSet.getInt("idArticle"), world, resultSet.getString("name"),
+                               resultSet.getString("content"), resultSet.getDate("last_update"),
+                               resultSet.getInt("heightMin"), resultSet.getInt("heightMax"),
+                               (Language) world.getArticleWithId(resultSet.getInt("idLanguage"))));
+      }
+   }
+
+   public static int createRace(World world, String name, String content, int idLanguage, int heightMin, int heightMax)
+           throws SQLException {
+      int id;
+      try {
+         id = Article.createArticle(world, name, content);
+         Connection connection = world.getUser().getConnection();
+         PreparedStatement statement = connection.prepareStatement(
+                 "INSERT INTO worldproject.race(idarticle, idlanguage, heightmin, heightmax) VALUES (?,?,?,?)");
+         statement.setInt(1, id);
+         statement.setInt(2, idLanguage);
+         statement.setInt(3, heightMin);
+         statement.setInt(4, heightMax);
+         statement.execute();
+      } catch (SQLException throwables) {
+         throwables.printStackTrace();
+         System.err.println("Error while adding article to database");
+         throw throwables;
+      }
+      return id;
    }
 
    public int getHeighMin() {

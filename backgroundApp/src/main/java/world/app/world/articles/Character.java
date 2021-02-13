@@ -9,17 +9,14 @@ import util.HashMapChaining;
 import world.app.world.Article;
 import world.app.world.World;
 
-import java.sql.Connection;
-import java.sql.Date;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 
 public class Character extends Article {
-   private Race race;
    private final HashMapChaining<Language> languages;
    private final ArrayList<Language> languagesDeleted = new ArrayList<>();
    private final ArrayList<Article> languagesAdded = new ArrayList<>();
+   private Race race;
 
    public Character(int id, World world, String name, String content, Date lastUpdate, Race race,
                     HashMapChaining<Language> languages) {
@@ -62,6 +59,50 @@ public class Character extends Article {
       }
    }
 
+   public static void loadCharacterIntoWorld(World world, int id) throws SQLException {
+      HashMapChaining<Article> articles = world.getArticles();
+      if (articles.find(id) != null) {
+         return;
+      }
+      PreparedStatement statement = world.getUser().getConnection().prepareStatement(
+              "SELECT * FROM worldproject.article INNER JOIN worldproject.character c ON article.id = c.idArticle " +
+              "WHERE article.id = ? AND article.idWorld=?");
+      statement.setInt(1, id);
+      statement.setInt(2, world.getId());
+      ResultSet resultSet = statement.executeQuery();
+      if (resultSet.next()) {
+         statement = world.getUser().getConnection().prepareStatement(
+                 "SELECT cl.idLanguage FROM worldproject.character c INNER JOIN worldproject.character_language cl" +
+                 " ON c.idArticle = cl.idCharacter WHERE c.idArticle=?");
+         statement.setInt(1, resultSet.getInt("id"));
+         ResultSet languagesResult = statement.executeQuery();
+         HashMapChaining<Language> languages = new HashMapChaining<>();
+         while (languagesResult.next()) {
+            languages.add((Language) world.getArticleWithId(languagesResult.getInt(1)));
+         }
+         articles.add(new Character(resultSet.getInt("idArticle"), world, resultSet.getString("name"),
+                                    resultSet.getString("content"), resultSet.getDate("last_update"),
+                                    (Race) world.getArticleWithId(resultSet.getInt("idRace")), languages));
+      }
+   }
+
+   public static int createCharacter(World world, String name, String content, int idRace) throws SQLException {
+      int id;
+      try {
+         id = Article.createArticle(world, name, content);
+         Connection connection = world.getUser().getConnection();
+         PreparedStatement statement =
+                 connection.prepareStatement("INSERT INTO worldproject.character(idarticle, idrace) VALUES (?,?)");
+         statement.setInt(1, id);
+         statement.setInt(2, idRace);
+         statement.execute();
+      } catch (SQLException throwables) {
+         throwables.printStackTrace();
+         System.err.println("Error while adding article to database");
+         throw throwables;
+      }
+      return id;
+   }
 
    @Override
    public String toString() {

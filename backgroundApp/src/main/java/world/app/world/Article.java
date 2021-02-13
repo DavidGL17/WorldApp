@@ -144,8 +144,8 @@ public abstract class Article implements Modifiable {
       ArrayList<Article> results = new ArrayList<>();
       try {
          PreparedStatement statement = connection.prepareStatement(
-                 "\n" + "SELECT * FROM worldproject.article a INNER JOIN worldproject.legend" +
-                 " l ON a.id = l.idArticle WHERE idWorld=?");
+                 "SELECT * FROM worldproject.article a INNER JOIN worldproject.legend l ON a.id = l.idArticle WHERE " +
+                 "idWorld=?");
          statement.setInt(1, world.getId());
          ResultSet resultSet = statement.executeQuery();
          while (resultSet.next()) {
@@ -349,7 +349,7 @@ public abstract class Article implements Modifiable {
          while (resultSet.next()) {
             results.add(new War(resultSet.getInt("idArticle"), world, resultSet.getString("name"),
                                 resultSet.getString("content"), resultSet.getDate("last_update"),
-                                resultSet.getDate("dateBeginning"), resultSet.getDate("dateEnd"),
+                                resultSet.getString("dateBeginning"), resultSet.getString("dateEnd"),
                                 resultSet.getInt("deathCount"),
                                 (Side) world.getArticleWithId(resultSet.getInt("idSide1")),
                                 (Side) world.getArticleWithId(resultSet.getInt("idSide2"))));
@@ -414,7 +414,7 @@ public abstract class Article implements Modifiable {
             }
             results.add(new Accord(resultSet.getInt("idArticle"), world, resultSet.getString("name"),
                                    resultSet.getString("content"), resultSet.getDate("last_update"),
-                                   resultSet.getDate("dateBeginning"), resultSet.getDate("dateEnd"),
+                                   resultSet.getString("dateBeginning"), resultSet.getString("dateEnd"),
                                    (AccordType) world.getArticleWithId(resultSet.getInt("idAccordType")), countries));
          }
       } catch (SQLException throwables) {
@@ -491,10 +491,6 @@ public abstract class Article implements Modifiable {
       }
    }
 
-
-   void test(){
-
-   }
    /**
     * Gets last update.
     *
@@ -566,7 +562,27 @@ public abstract class Article implements Modifiable {
       return true;
    }
 
+   protected static int createArticle(World world, String name, String content) throws SQLException {
+      int id = 0;
+      Connection connection = world.getUser().getConnection();
+      PreparedStatement statement = connection.prepareStatement(
+              "INSERT INTO worldproject.article(idworld, name, content) VALUES (?,?,?) RETURNING id");
+      statement.setInt(1, world.getId());
+      statement.setString(2, name);
+      statement.setString(3, content);
+      ResultSet resultSet = statement.executeQuery();
+      if (resultSet.next()) {
+         id = resultSet.getInt("id");
+      }
+      return id;
+   }
+
+   void test() {
+
+   }
+
    protected void setUpdateIsNeeded() {
       this.updateNeeded = true;
    }
+
 }

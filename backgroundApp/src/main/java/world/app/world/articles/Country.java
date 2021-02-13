@@ -10,10 +10,7 @@ import world.app.world.Article;
 import world.app.world.World;
 import world.app.world.articles.events.Accord;
 
-import java.sql.Connection;
-import java.sql.Date;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 
 public class Country extends Article {
@@ -35,6 +32,52 @@ public class Country extends Article {
       this.sidesInvolvedIn = sidesInvolvedIn;
       this.accords = accords;
       continent.addCountry(this);
+   }
+
+   public static void loadCountryIntoWorld(World world, int id) throws SQLException {
+      HashMapChaining<Article> articles = world.getArticles();
+      if (articles.find(id) != null) {
+         return;
+      }
+      PreparedStatement statement = world.getUser().getConnection().prepareStatement(
+              "SELECT * FROM worldproject.article a INNER JOIN worldproject.country c ON a.id = c.idArticle WHERE " +
+              "a.id = ? AND a.idWorld=?");
+      statement.setInt(1, id);
+      statement.setInt(2, world.getId());
+      ResultSet resultSet = statement.executeQuery();
+      if (resultSet.next()) {
+         statement = world.getUser().getConnection().prepareStatement(
+                 "SELECT cr.idRace FROM worldproject.country c INNER JOIN worldproject.country_race cr ON c" +
+                 ".idArticle = cr.idCountry WHERE c.idArticle=?");
+         statement.setInt(1, resultSet.getInt("idArticle"));
+         ResultSet racesResult = statement.executeQuery();
+         HashMapChaining<Race> races = new HashMapChaining<>();
+         while (racesResult.next()) {
+            races.add((Race) world.getArticleWithId(racesResult.getInt("idRace")));
+         }
+         articles.add(new Country(resultSet.getInt("idArticle"), world, resultSet.getString("name"),
+                                  resultSet.getString("content"), resultSet.getDate("last_update"),
+                                  (Continent) world.getArticleWithId(resultSet.getInt("idContinent")),
+                                  new HashMapChaining<>(), races, new HashMapChaining<>(), new HashMapChaining<>()));
+      }
+   }
+
+   public static int createCountry(World world, String name, String content, int idContinent) throws SQLException {
+      int id;
+      try {
+         id = Article.createArticle(world, name, content);
+         Connection connection = world.getUser().getConnection();
+         PreparedStatement statement =
+                 connection.prepareStatement("INSERT INTO worldproject.country(idarticle, idcontinent) VALUES (?,?)");
+         statement.setInt(1, id);
+         statement.setInt(2, idContinent);
+         statement.execute();
+      } catch (SQLException throwables) {
+         throwables.printStackTrace();
+         System.err.println("Error while adding article to database");
+         throw throwables;
+      }
+      return id;
    }
 
    @Override

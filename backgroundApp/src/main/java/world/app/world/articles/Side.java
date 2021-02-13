@@ -8,12 +8,8 @@ package world.app.world.articles;
 import util.HashMapChaining;
 import world.app.world.Article;
 import world.app.world.World;
-import world.app.world.articles.Country;
-import world.app.world.articles.TypeOfArticle;
 
-import java.sql.Connection;
-import java.sql.Date;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 
 public class Side extends Article {
@@ -27,6 +23,49 @@ public class Side extends Article {
       for (Country c : countries) {
          c.addSide(this);
       }
+   }
+
+   public static void loadSideIntoWorld(World world, int id) throws SQLException {
+      HashMapChaining<Article> articles = world.getArticles();
+      if (articles.find(id) != null) {
+         return;
+      }
+      PreparedStatement statement = world.getUser().getConnection().prepareStatement(
+              "SELECT * FROM worldproject.article a INNER JOIN worldproject.side s ON a.id = s.idArticle WHERE " +
+              "a.id = ? AND a.idWorld = ?");
+      statement.setInt(1, id);
+      statement.setInt(2, world.getId());
+      ResultSet resultSet = statement.executeQuery();
+      if (resultSet.next()) {
+         statement = world.getUser().getConnection().prepareStatement(
+                 "SELECT cs.idCountry FROM worldproject.side s INNER JOIN worldproject.country_side cs ON s" +
+                 ".idArticle = cs.idSide WHERE s.idArticle=?");
+         statement.setInt(1, resultSet.getInt("idArticle"));
+         ResultSet countryResults = statement.executeQuery();
+         HashMapChaining<Country> countries = new HashMapChaining<>();
+         while (countryResults.next()) {
+            countries.add((Country) world.getArticleWithId(countryResults.getInt("idCountry")));
+         }
+         articles.add(new Side(resultSet.getInt("idArticle"), world, resultSet.getString("name"),
+                               resultSet.getString("content"), resultSet.getDate("last_update"), countries));
+      }
+   }
+
+   public static int createSide(World world, String name, String content) throws SQLException {
+      int id;
+      try {
+          id = Article.createArticle(world, name, content);
+         Connection connection = world.getUser().getConnection();
+         PreparedStatement statement =
+                 connection.prepareStatement("INSERT INTO worldproject.side(idarticle) VALUES (?)");
+         statement.setInt(1, id);
+         statement.execute();
+      } catch (SQLException throwables) {
+         throwables.printStackTrace();
+         System.err.println("Error while adding article to database");
+         throw throwables;
+      }
+      return id;
    }
 
    @Override

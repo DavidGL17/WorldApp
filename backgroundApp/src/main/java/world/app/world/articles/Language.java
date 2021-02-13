@@ -9,14 +9,11 @@ import util.HashMapChaining;
 import world.app.world.Article;
 import world.app.world.World;
 
-import java.sql.Connection;
-import java.sql.Date;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
+import java.sql.*;
 
 public class Language extends Article {
-   private Alphabet alphabet;
    private final HashMapChaining<Race> races;
+   private Alphabet alphabet;
 
    public Language(int id, World world, String name, String content, Date lastUpdate, Alphabet alphabet,
                    HashMapChaining<Race> races) {
@@ -24,6 +21,43 @@ public class Language extends Article {
       this.alphabet = alphabet;
       alphabet.addLanguage(this);
       this.races = races;
+   }
+
+   public static void loadLanguageIntoWorld(World world, int id) throws SQLException {
+      HashMapChaining<Article> articles = world.getArticles();
+      if (articles.find(id) != null) {
+         return;
+      }
+      PreparedStatement statement = world.getUser().getConnection().prepareStatement(
+              "SELECT * FROM worldproject.article a INNER JOIN worldproject.language l ON a.id = l.idArticle WHERE" +
+              "  a.id = ? AND a.idWorld = ?");
+      statement.setInt(1, id);
+      statement.setInt(2, world.getId());
+      ResultSet resultSet = statement.executeQuery();
+      if (resultSet.next()) {
+         articles.add(new Language(resultSet.getInt("idArticle"), world, resultSet.getString("name"),
+                                   resultSet.getString("content"), resultSet.getDate("last_update"),
+                                   (Alphabet) world.getArticleWithId(resultSet.getInt("idAlphabet")),
+                                   new HashMapChaining<>()));
+      }
+   }
+
+   public static int createLanguage(World world, String name, String content, int idAlphabet) throws SQLException {
+      int id;
+      try {
+         id = Article.createArticle(world, name, content);
+         Connection connection = world.getUser().getConnection();
+         PreparedStatement statement =
+                 connection.prepareStatement("INSERT INTO worldproject.language(idarticle, idalphabet) VALUES (?,?)");
+         statement.setInt(1, id);
+         statement.setInt(2, idAlphabet);
+         statement.execute();
+      } catch (SQLException throwables) {
+         throwables.printStackTrace();
+         System.err.println("Error while adding article to database");
+         throw throwables;
+      }
+      return id;
    }
 
    @Override
