@@ -28,34 +28,52 @@ public class World implements Modifiable {
    private boolean inModification = false;
    private boolean updateNeeded = false;
 
-   /**
-    * Instantiates a new World.
-    *
-    * @param name the name of the world
-    * @param user the user that creates this world
-    */
-   public World(String name, User user) throws SQLException {
+
+   public World(int id, User user, String name, String description) {
+      this.id = id;
+      this.user = user;
+      this.name = name;
+      this.description = description;
+   }
+
+   public static void loadWorldIntoUser(User user, int id) throws SQLException {
       try {
-         Connection connection = user.getConnection();
-         PreparedStatement statement =
-                 connection.prepareStatement("SELECT * FROM worldproject.world w WHERE w.name = ? AND w.idUser = ?");
-         statement.setString(1, name);
-         statement.setInt(2, user.getId());
+         PreparedStatement statement = user.getConnection().prepareStatement(
+                 "SELECT * FROM worldproject.world WHERE world.idUser=? AND world.id = ?;");
+         statement.setInt(1, user.getId());
+         statement.setInt(2, id);
          ResultSet resultSet = statement.executeQuery();
-         resultSet.next();
-         if (!resultSet.isLast()) {
-            throw new RuntimeException("name or userId is wrong");
+         if (resultSet.next()) {
+            user.getWorlds().add(new World(resultSet.getInt("id"), user, resultSet.getString("name"),
+                                           resultSet.getString("description")));
+         } else {
+            throw new IllegalArgumentException();
          }
-         this.user = user;
-         this.name = name;
-         this.id = resultSet.getInt("id");
-         this.description = resultSet.getString("description");
-         loadArticles();
       } catch (SQLException throwables) {
          throwables.printStackTrace();
-         System.err.println("Error while creating world");
+         System.err.println("Error while getting the world");
          throw throwables;
       }
+   }
+
+   public static int createWorld(User user, String name, String description) throws SQLException {
+      int id = 0;
+      try {
+         PreparedStatement statement = user.getConnection().prepareStatement(
+                 "INSERT INTO worldproject.world(name, idUser, description) VALUES (?,?,?) RETURNING id");
+         statement.setString(1, name);
+         statement.setInt(2, user.getId());
+         statement.setString(3, description);
+         ResultSet resultSet = statement.executeQuery();
+         if (resultSet.next()) {
+            id = resultSet.getInt("id");
+         }
+      } catch (SQLException throwables) {
+         throwables.printStackTrace();
+         System.out.println("Error while inserting the world");
+         throw throwables;
+      }
+      return id;
    }
 
    /**
@@ -94,7 +112,7 @@ public class World implements Modifiable {
    public void setName(String name) {
       if (name != null) {
          if (inModification) {
-            if (!getUser().checkWorldName(name)) {
+            if (!getUser().isWorldNameValid(name)) {
                return;
             }
             this.name = name;

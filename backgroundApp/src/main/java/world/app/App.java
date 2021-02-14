@@ -35,6 +35,10 @@ public class App {
       user = new User(userId, password, connection);
    }
 
+   public User getUser() {
+      return user;
+   }
+
    public static void main(String[] args)
            throws User.UserIdNotFoundException, User.WrongPasswordException, SQLException {
       App app = new App(1, "1234");
@@ -52,12 +56,8 @@ public class App {
       return user.getWorlds();
    }
 
-   public void addWorld(String name) {
-      user.createWorld(name);
-   }
-
-   public void setCurrentWorld(World currentWorld) {
-      this.currentWorld = currentWorld;
+   public void addWorld(String name, String description) throws SQLException {
+      World.loadWorldIntoUser(user,World.createWorld(user, name, description));
    }
 
    public ArrayList<Article> getArticlesByArticleType(TypeOfArticle articleType) {
@@ -70,11 +70,16 @@ public class App {
       return articles;
    }
 
-   public World getCurrentWorld(){
+   public World getCurrentWorld() {
       return currentWorld;
    }
 
-   public void addArticle(Article article){
+   public void setCurrentWorld(World currentWorld) {
+      this.currentWorld = currentWorld;
+      currentWorld.loadArticles();
+   }
+
+   public void addArticle(Article article) {
       currentWorld.getArticles().add(article);
    }
 }

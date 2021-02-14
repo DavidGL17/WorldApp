@@ -168,32 +168,6 @@ public class User {
    }
 
    /**
-    * Create a new world and links it with the user. If the name given to the world is already given to another world of
-    * the user, the operation is refused
-    *
-    * @param name the name of the world to create
-    *
-    * @return true if the world was created, false if it wasn't
-    */
-   public boolean createWorld(String name) {
-      if (!checkWorldName(name)) {
-         return false;
-      }
-      try {
-         PreparedStatement statement = connection.prepareStatement(
-                 "INSERT INTO worldproject.world(name, idUser, description) VALUES (?,?,?)");
-         statement.setString(1, name);
-         statement.setInt(2, id);
-         statement.setString(3, "");
-         statement.execute();
-      } catch (SQLException throwables) {
-         throwables.printStackTrace();
-         System.out.println("Error while inserting the world");
-      }
-      return true;
-   }
-
-   /**
     * Loads a specific world's information, meaning all of it's articles
     *
     * @param worldID the world id of the world we want to load the information from
@@ -202,7 +176,7 @@ public class User {
       for (World w : worlds) {
          if (w.getId() == worldID) {
             w.loadArticles();
-            break;
+            return;
          }
       }
       System.err.println("No world with this id exists");
@@ -215,7 +189,7 @@ public class User {
     *
     * @return true if there is no world with this name, false otherwise
     */
-   public boolean checkWorldName(String worldName) {
+   public boolean isWorldNameValid(String worldName) {
       for (World world : worlds) {
          if (world.getName().equals(worldName)) {
             return false;
@@ -225,17 +199,14 @@ public class User {
    }
 
    /**
-    * Loads the articles of the given world
+    * Adds a world to the list of wolrds of this user, and loads all of it's articles
     *
-    * @param worldName the name of the world
+    * @param id
+    * @param name
+    * @param description
     */
-   private void loadWorld(String worldName) {
-      try {
-         worlds.add(new World(worldName, this));
-      } catch (SQLException throwables) {
-         throwables.printStackTrace();
-         System.out.println("Error loading a world");
-      }
+   private void loadWorld(int id, String name, String description) {
+      worlds.add(new World(id, this, name, description));
    }
 
    /**
@@ -245,11 +216,11 @@ public class User {
    private void loadWorlds() {
       try {
          PreparedStatement statement =
-                 connection.prepareStatement("SELECT name FROM worldproject.world WHERE world.idUser=?;");
+                 connection.prepareStatement("SELECT * FROM worldproject.world WHERE world.idUser=?;");
          statement.setInt(1, id);
          ResultSet resultSet = statement.executeQuery();
          while (resultSet.next()) {
-            loadWorld(resultSet.getString(1));
+            loadWorld(resultSet.getInt("id"), resultSet.getString("name"), resultSet.getString("description"));
          }
       } catch (SQLException throwables) {
          throwables.printStackTrace();
@@ -259,7 +230,7 @@ public class User {
    /**
     * The type User id not found exception.
     */
-   public class UserIdNotFoundException extends Exception {
+   public static class UserIdNotFoundException extends Exception {
       /**
        * Instantiates a new User id not found exception.
        *
@@ -273,7 +244,7 @@ public class User {
    /**
     * The type Wrong password exception.
     */
-   public class WrongPasswordException extends Exception {
+   public static class WrongPasswordException extends Exception {
       /**
        * Instantiates a new Wrong password exception.
        *
