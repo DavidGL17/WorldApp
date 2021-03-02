@@ -157,10 +157,4 @@ public class Accord extends Event {
          }
       }
    }
-
-   public static void createAccord(String name, String content, int accordTypeId, String dateBeginning,
-                                   String dateEnd) {
-
-   }
-
 }

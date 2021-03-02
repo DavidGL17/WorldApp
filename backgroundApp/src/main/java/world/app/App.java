@@ -24,13 +24,13 @@ public class App {
 
    public App(int userId, String password)
            throws User.WrongPasswordException, User.UserIdNotFoundException, SQLException {
-      Connection connection = DriverManager.getConnection(Util.connectionString);
+      Connection connection = DriverManager.getConnection(Util.string);
       user = new User(userId, password, connection);
    }
 
    public App(String firstName, String lastName, String email, String password)
            throws User.WrongPasswordException, User.UserIdNotFoundException, SQLException {
-      Connection connection = DriverManager.getConnection(Util.connectionString);
+      Connection connection = DriverManager.getConnection(Util.string);
       int userId = User.createUser(connection, firstName, lastName, email, password);
       user = new User(userId, password, connection);
    }

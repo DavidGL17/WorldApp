@@ -577,10 +577,6 @@ public abstract class Article implements Modifiable {
       return id;
    }
 
-   void test() {
-
-   }
-
    protected void setUpdateIsNeeded() {
       this.updateNeeded = true;
    }

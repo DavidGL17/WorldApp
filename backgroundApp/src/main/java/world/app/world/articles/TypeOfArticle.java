@@ -10,7 +10,7 @@ public enum TypeOfArticle {
    COUNTRY("Country"), LANGUAGE("Language"), LEGEND("Legend"), RACE("Race"), RANK("Rank"), SIDE("Side"), WAR("War");
 
 
-   private String name;
+   private final String name;
 
    TypeOfArticle(String name) {
       this.name = name;
