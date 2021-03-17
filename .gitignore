@@ -1,24 +1,4 @@
 
+Server/target/
 
-
-
-
-
-
-
-
-.gradle/
-
-.idea/
-
-backgroundApp/build/
-
-backgroundApp/out/
-
-libs/
-
-out/
-
-VisualApp/build/
-
-build/
+Client/target/
