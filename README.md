@@ -9,4 +9,6 @@ Development goals : currently my main goal is to finish developping the part tha
 next goal will be to create the UI interface for the application. Then I will start adding more functionalities, like
 additional types of articles, and the ability for more than 1 person to see and/or work on a world at the same time.
 
-The project is compiled using gradle, and uses JavaFx for the ui, PostgreSQL for the database
+The project is compiled using maven, and uses JavaFx for the ui, PostgreSQL for the database, and java I/O for the communication between the client and the server.
+
+
