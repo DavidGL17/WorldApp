@@ -1,5 +1,7 @@
 # WorldApp
 
+![GitHub](https://img.shields.io/github/license/DavidGL17/WorldApp) ![GitHub Workflow Status](https://img.shields.io/github/workflow/status/DavidGL17/WorldApp/Java%20CI%20with%20Maven) ![GitHub repo size](https://img.shields.io/github/repo-size/DavidGL17/WorldApp) ![GitHub release (latest by date)](https://img.shields.io/github/v/release/DavidGL17/WorldApp)
+
 This project is developped by David González León, a Swiss IT Student.
 
 The goal of this project is to create an application that allows the user to create and store information about his
