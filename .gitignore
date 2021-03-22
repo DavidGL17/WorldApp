@@ -2,3 +2,7 @@
 Server/target/
 
 Client/target/
+
+.idea/
+
+Server/logs/
