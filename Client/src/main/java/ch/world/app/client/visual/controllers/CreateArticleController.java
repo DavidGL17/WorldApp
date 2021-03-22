@@ -364,7 +364,7 @@ public class CreateArticleController extends Controller {
 
    private ComboBox<Article> createComboBox(ArrayList<Article> articles) {
       ComboBox<Article> comboBox = new ComboBox<>();
-      comboBox.setConverter(new StringConverter<>() {
+      comboBox.setConverter(new StringConverter<Article>() {
          @Override
          public String toString(Article object) {
             if (object != null) {
