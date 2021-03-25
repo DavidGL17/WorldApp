@@ -5,21 +5,19 @@
  */
 package ch.world.app.server;
 
-import ch.world.app.server.util.Logging;
-
-import java.io.File;
-import java.util.logging.Logger;
+import java.io.IOException;
 
 public class Main {
-   private static final Logger logger =
-           Logging.getSetuppedLogger(Main.class.getName(), Logging.getCurrentPath() + "/logs/log.log");
 
    public static void main(String[] args) {
-      File logDirectory = new File(Logging.getCurrentPath()+"/Server/logs");
-      if (!logDirectory.exists()){
-         logDirectory.mkdirs();
+      WorldAppServer server;
+      try {
+         server = new WorldAppServer();
+      } catch (IOException e) {
+         e.printStackTrace();
+         return;
       }
-      logger.info("This is a test");
 
+      server.start();
    }
 }
