@@ -3,7 +3,7 @@
  * @Authors : David González León
  * @Date 21 mars 2021
  */
-package ch.world.app.server.util;
+package ch.world.app.util;
 
 import java.io.File;
 import java.io.IOException;

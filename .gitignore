@@ -6,3 +6,5 @@ Client/target/
 .idea/
 
 Server/logs/
+
+Util/target/

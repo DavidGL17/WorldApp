@@ -1,7 +1,7 @@
-package ch.world.app.server.util;/*
+package ch.world.app.util;/*
  * @File LoggingTest.java
  * @Authors : David González León
- * @Date 22 mars 2021
+ * @Date 26 mars 2021
  */
 
 import org.apache.commons.io.FileUtils;
@@ -13,7 +13,8 @@ import java.io.IOException;
 import java.util.logging.Handler;
 import java.util.logging.Logger;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class LoggingTest {
 
@@ -51,7 +52,7 @@ class LoggingTest {
    @Test
    void getCurrentPathReturnsTheCorrectPath() throws IOException {
       String path = new File(".").getCanonicalPath();
-      assertEquals(path,Logging.getCurrentPath());
+      assertEquals(path, Logging.getCurrentPath());
    }
 
    @AfterEach

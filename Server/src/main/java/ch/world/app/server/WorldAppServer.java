@@ -5,7 +5,7 @@
  */
 package ch.world.app.server;
 
-import ch.world.app.server.util.Logging;
+import ch.world.app.util.Logging;
 
 import java.io.File;
 import java.io.IOException;
