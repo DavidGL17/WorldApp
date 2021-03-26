@@ -1,4 +1,4 @@
-# Protocole Server world app<!-- omit in toc -->>
+# Protocole Server world app <!-- omit in toc -->>
 
 - [1. Introduction](#1-introduction)
   - [1.1. Protocol's objectives](#11-protocols-objectives)
