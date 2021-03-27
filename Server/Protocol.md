@@ -1,27 +1,27 @@
 # Protocole Server world app <!-- omit in toc -->
 
 - [1. Introduction](#1-introduction)
-  - [1.1. Protocol's objectives](#11-protocols-objectives)
+    - [1.1. Protocol's objectives](#11-protocols-objectives)
 - [2. Message syntax](#2-message-syntax)
-  - [2.1. Messages that transport data](#21-messages-that-transport-data)
-    - [2.1.1. user_id](#211-user_id)
-    - [2.1.2. id](#212-id)
-    - [2.1.3. data](#213-data)
-  - [2.2. Error messages](#22-error-messages)
+    - [2.1. Messages that transport data](#21-messages-that-transport-data)
+        - [2.1.1. user_id](#211-user_id)
+        - [2.1.2. id](#212-id)
+        - [2.1.3. data](#213-data)
+    - [2.2. Error messages](#22-error-messages)
 
 ## 1. Introduction
 
-Ce protocole a été conçu pour que des clients utilisant l'application client World app puissent communiquer avec le
-serveur, ceci afin de stocker les données des mondes qu'ils developpent.
+This protocol has been made for the World app application. It describes the messages that can be sent between the client
+and the server.
 
 ### 1.1. Protocol's objectives
 
-Le but de ce protocole est de définir les opérations précises que doit supporter le serveur afin de permettre l'envoi et
-la réception de données.
+The aim of this protocol is to allow the server and client to share data. It allows the server to store and keep up to
+date the data that is then sent to the client when requested.
 
 ## 2. Message syntax
 
-|     Commande     |                                Description                                | Used by | Carries Data |
+|     Message      |                                Description                                | Used by | Carries Data |
 | :--------------: | :-----------------------------------------------------------------------: | :-----: | :----------: |
 |       CONN       |       Allows the user to establish a communication with the server        | Client  |   user_id    |
 |     CONN_OK      |                Allows the server to confirm the connection                | Server  |      no      |
@@ -42,7 +42,8 @@ la réception de données.
 |     STOP_OK      |                    Confirms the end of the connection                     | Server  |      no      |
 |      ERROR       |     Indicates an error has occured (see bellow for more information)      |  Both   |      no      |
 
-Every messages end is defined by CRLF.
+Every messages end is defined by CRLF. All messages except the CONN and CONN_OK must be encrypted. The details of the
+encryption method are shared bellow
 
 ### 2.1. Messages that transport data
 
@@ -92,3 +93,18 @@ The Error message is sent with the following syntax :
 ```
 ERROR 400 SYNTAX ERROR CRLF
 ```
+
+### 2.3. Message Encryption
+
+All messages are encrypted using a two key RSA method. Both public keys are shared at connection, and should be saved
+until the connection is closed.
+
+The encryption method should be :
+
+- For the client : text -> encrypted with Server Public key -> encrypted with my private key
+- For the server : text -> encrypted with Client Public key -> encrypted with my private key
+
+To decipher a message, the method sould be :
+
+- For the client : cypher -> decipher with Server Public key -> decipher with my private key -> text
+- For the server : cypher -> decipher with Client Public key -> decipher with my private key -> text
