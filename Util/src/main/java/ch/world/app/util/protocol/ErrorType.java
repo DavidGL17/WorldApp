@@ -6,7 +6,7 @@
 package ch.world.app.util.protocol;
 
 /**
- * The enum Error type, that describes the errors defined in the protocol.
+ * The enum Error type, that describes the errors defined in the Protocol.md file.
  */
 public enum ErrorType {
 
