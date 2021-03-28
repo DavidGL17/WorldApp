@@ -11,7 +11,6 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import java.io.*;
 import java.security.*;
-import java.util.Arrays;
 import java.util.Base64;
 
 public class Encryption {
@@ -34,6 +33,9 @@ public class Encryption {
     */
    public static final String PUBLIC_KEY_FILE;
 
+   /**
+    * Location of the base directory for clients public keys
+    */
    public static final String PUBLIC_KEY_CLIENT_DIRECTORY;
 
    static {
@@ -55,19 +57,9 @@ public class Encryption {
       PUBLIC_KEY_CLIENT_DIRECTORY = PUBLIC_KEY_CLIENT_DIRECTORY_TMP;
    }
 
-   public static void main(String[] args) {
-      try {
-         generateKey();
-      } catch (IOException e) {
-         e.printStackTrace();
-      } catch (NoSuchAlgorithmException e) {
-         e.printStackTrace();
-      }
-   }
-
    /**
     * Generate key which contains a pair of private and public key using 1024
-    * bytes. Store the set of keys in Prvate.key and Public.key files.
+    * bytes. Store the set of keys in Private.key and Public.key files.
     *
     * @throws NoSuchAlgorithmException
     * @throws IOException
@@ -92,10 +84,6 @@ public class Encryption {
       publicKeyFile.createNewFile();
 
       // Saving the Public key in a file
-      System.out.println(key.getPublic().getFormat());
-      System.out.println(Arrays.toString(Base64.getEncoder().encode(key.getPublic().getEncoded())));
-      byte[] encodedPublic = Base64.getEncoder().encode(key.getPublic().getEncoded());
-      System.out.println(Arrays.equals(key.getPublic().getEncoded(), Base64.getDecoder().decode(encodedPublic)));
       ObjectOutputStream publicKeyOS = new ObjectOutputStream(new FileOutputStream(publicKeyFile));
       publicKeyOS.writeObject(key.getPublic());
       publicKeyOS.close();
@@ -128,10 +116,15 @@ public class Encryption {
 
          @Override
          public byte[] getEncoded() {
-            return Base64.getDecoder().decode(encodedPublicKey);
+            return encodedPublicKey;
          }
       };
       File clientPublicKeyFile = new File(PUBLIC_KEY_CLIENT_DIRECTORY + "/PC" + clientId + ".key");
+
+      if (clientPublicKeyFile.getParentFile() != null) {
+         clientPublicKeyFile.getParentFile().mkdirs();
+      }
+      clientPublicKeyFile.createNewFile();
 
       ObjectOutputStream publicKeyOS = new ObjectOutputStream(new FileOutputStream(clientPublicKeyFile));
       publicKeyOS.writeObject(publicClientKey);
@@ -154,22 +147,43 @@ public class Encryption {
       return false;
    }
 
+   /**
+    * Returns the public key created by the generateKey function, if it exists
+    * @return the public key
+    * @throws IOException if the key does not exist, or if there was an issue while reading the key file
+    * @throws ClassNotFoundException if the key files did not contain a public key
+    */
    public static PublicKey getPublicKey() throws IOException, ClassNotFoundException {
       ObjectInputStream inputStream = new ObjectInputStream(new FileInputStream(PUBLIC_KEY_FILE));
       PublicKey publicKey = (PublicKey) inputStream.readObject();
+      inputStream.close();
       return publicKey;
    }
 
+   /**
+    * Returns the private key created by the generateKey function, if it exists
+    * @return the private key
+    * @throws IOException if the key does not exist, or if there was an issue while reading the key file
+    * @throws ClassNotFoundException if the key files did not contain a private key
+    */
    public static PrivateKey getPrivateKey() throws IOException, ClassNotFoundException {
       ObjectInputStream inputStream = new ObjectInputStream(new FileInputStream(PRIVATE_KEY_FILE));
       PrivateKey privateKey = (PrivateKey) inputStream.readObject();
+      inputStream.close();
       return privateKey;
    }
 
+   /**
+    * Returns the public key linked to the given user id, if it exists
+    * @return the public key linked to the given user
+    * @throws IOException if the key does not exist, or if there was an issue while reading the key file
+    * @throws ClassNotFoundException if the key files did not contain a public key
+    */
    public static PublicKey getClientPublicKey(int clientId) throws IOException, ClassNotFoundException {
       ObjectInputStream inputStream =
               new ObjectInputStream(new FileInputStream(PUBLIC_KEY_CLIENT_DIRECTORY + "/PC" + clientId + ".key"));
       PublicKey publicKey = (PublicKey) inputStream.readObject();
+      inputStream.close();
       return publicKey;
    }
 
