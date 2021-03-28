@@ -1,13 +1,15 @@
 # Protocole Server world app <!-- omit in toc -->
 
 - [1. Introduction](#1-introduction)
-    - [1.1. Protocol's objectives](#11-protocols-objectives)
+  - [1.1. Protocol's objectives](#11-protocols-objectives)
 - [2. Message syntax](#2-message-syntax)
-    - [2.1. Messages that transport data](#21-messages-that-transport-data)
-        - [2.1.1. user_id](#211-user_id)
-        - [2.1.2. id](#212-id)
-        - [2.1.3. data](#213-data)
-    - [2.2. Error messages](#22-error-messages)
+  - [2.1. Messages that transport data](#21-messages-that-transport-data)
+    - [2.1.1. publicKey](#211-publickey)
+    - [2.1.2. user_id](#212-user_id)
+    - [2.1.3. id](#213-id)
+    - [2.1.4. data](#214-data)
+  - [2.2. Error messages](#22-error-messages)
+  - [2.3. Message Encryption](#23-message-encryption)
 
 ## 1. Introduction
 
@@ -23,8 +25,10 @@ date the data that is then sent to the client when requested.
 
 |     Message      |                                Description                                | Used by | Carries Data |
 | :--------------: | :-----------------------------------------------------------------------: | :-----: | :----------: |
-|       CONN       |       Allows the user to establish a communication with the server        | Client  |   user_id    |
-|     CONN_OK      |                Allows the server to confirm the connection                | Server  |      no      |
+|       CONN       |       Allows the user to establish a communication with the server        | Client  |  publicKey   |
+|     CONN_OK      |                Allows the server to confirm the connection                | Server  |  publicKey   |
+|      LOGIN       |                    logins using the user's id and pswd                    | Client  |    userId    |
+|     LOGIN_OK     |                              confirms login                               | Server  |      no      |
 |   GET_ALL_DATA   | Asks the server to send all the data linked to that user in a json format | Client  |      no      |
 |  GET_WORLD_DATA  |               Requests the data linked to a specific world                | Client  |      id      |
 | GET_ARTICLE_DATA |              Requests the data linked to a specific article               | Client  |      id      |
@@ -49,15 +53,24 @@ encryption method are shared bellow
 
 The messages that carry data are divided into three cathegories :
 
-#### 2.1.1. user_id
+#### 2.1.1. publicKey
 
-Messages that carry the user_id carry also it's password, encrypted (TBD). It follows the following syntax :
+The first message sent by both parties is used to share both public keys, from then on, all comunication is made
+encrypted
 
 ```
-CONN user_id pswd CRLF
+CONN publicKey CRLF
 ```
 
-#### 2.1.2. id
+#### 2.1.2. user_id
+
+Messages that carry the user_id carry also it's password. It follows the following syntax :
+
+```
+LOGIN user_id pswd CRLF
+```
+
+#### 2.1.3. id
 
 Messages that carry an id (of a world or article) follow the following syntax :
 
@@ -67,7 +80,7 @@ ADD_WORLD id CRLF
 
 The id is a number positive non-zero.
 
-#### 2.1.3. data
+#### 2.1.4. data
 
 Messages that carry data carry a json file. The file's end is defined by CRLF (\r\n). Data structure is TBD. The
 messages will have the following syntax :
@@ -96,6 +109,6 @@ ERROR 400 SYNTAX ERROR CRLF
 
 ### 2.3. Message Encryption
 
-All messages are encrypted using a public/private key, Encoded using the RSA 1024 bit method. Each message is 
-encrypted with the sender's private key. The public keys are exchanged at the beginning of the conversation with the 
-CONN and CONN_OK message.
+All messages are encrypted using a public/private key, Encoded using the RSA 1024 bit method. Each message is encrypted
+with the sender's private key. The public keys are exchanged at the beginning of the conversation with the CONN and
+CONN_OK message.
