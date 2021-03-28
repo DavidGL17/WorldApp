@@ -15,5 +15,13 @@ public interface Util {
    char[] array = {'D', 'V', 'D', '1', '7', '0', '2', '7', '3', '8'};
    String schema = "worldproject";
    String string =
-           url + "/" + database + "?currentSchema=" + schema + "&user=" + user + "&password=" + Arrays.toString(array);
+           url + "/" + database + "?currentSchema=" + schema + "&user=" + user + "&password=" + getString();
+
+   private static String getString() {
+      StringBuilder res = new StringBuilder();
+      for (char c : array) {
+         res.append(c);
+      }
+      return res.toString();
+   }
 }
