@@ -96,15 +96,6 @@ ERROR 400 SYNTAX ERROR CRLF
 
 ### 2.3. Message Encryption
 
-All messages are encrypted using a two key RSA method. Both public keys are shared at connection, and should be saved
-until the connection is closed.
-
-The encryption method should be :
-
-- For the client : text -> encrypted with Server Public key -> encrypted with my private key
-- For the server : text -> encrypted with Client Public key -> encrypted with my private key
-
-To decipher a message, the method sould be :
-
-- For the client : cypher -> decipher with Server Public key -> decipher with my private key -> text
-- For the server : cypher -> decipher with Client Public key -> decipher with my private key -> text
+All messages are encrypted using a public/private key, Encoded using the RSA 1024 bit method. Each message is 
+encrypted with the sender's private key. The public keys are exchanged at the beginning of the conversation with the 
+CONN and CONN_OK message.
