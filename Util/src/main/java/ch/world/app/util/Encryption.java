@@ -9,17 +9,21 @@ import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.security.*;
+import java.util.Arrays;
+import java.util.Base64;
 
 public class Encryption {
    /**
     * Name of the algorithm used for encryption.
     */
    public static final String ALGORITHM = "RSA";
+
+   /**
+    * Name of the format of the keys
+    */
+   public static final String FORMAT = "X.509";
 
    /**
     * Location of the private key file.
@@ -30,19 +34,35 @@ public class Encryption {
     */
    public static final String PUBLIC_KEY_FILE;
 
+   public static final String PUBLIC_KEY_CLIENT_DIRECTORY;
+
    static {
       String PRIVATE_KEY_FILE_TMP;
       String PUBLIC_KEY_FILE_TMP;
+      String PUBLIC_KEY_CLIENT_DIRECTORY_TMP;
       try {
          PRIVATE_KEY_FILE_TMP = new File(".").getCanonicalPath() + "/keys/private.key";
          PUBLIC_KEY_FILE_TMP = new File(".").getCanonicalPath() + "/keys/public.key";
+         PUBLIC_KEY_CLIENT_DIRECTORY_TMP = new File(".").getCanonicalPath() + "/keys/clients";
       } catch (IOException e) {
          e.printStackTrace();
          PRIVATE_KEY_FILE_TMP = null;
          PUBLIC_KEY_FILE_TMP = null;
+         PUBLIC_KEY_CLIENT_DIRECTORY_TMP = null;
       }
       PRIVATE_KEY_FILE = PRIVATE_KEY_FILE_TMP;
       PUBLIC_KEY_FILE = PUBLIC_KEY_FILE_TMP;
+      PUBLIC_KEY_CLIENT_DIRECTORY = PUBLIC_KEY_CLIENT_DIRECTORY_TMP;
+   }
+
+   public static void main(String[] args) {
+      try {
+         generateKey();
+      } catch (IOException e) {
+         e.printStackTrace();
+      } catch (NoSuchAlgorithmException e) {
+         e.printStackTrace();
+      }
    }
 
    /**
@@ -72,6 +92,10 @@ public class Encryption {
       publicKeyFile.createNewFile();
 
       // Saving the Public key in a file
+      System.out.println(key.getPublic().getFormat());
+      System.out.println(Arrays.toString(Base64.getEncoder().encode(key.getPublic().getEncoded())));
+      byte[] encodedPublic = Base64.getEncoder().encode(key.getPublic().getEncoded());
+      System.out.println(Arrays.equals(key.getPublic().getEncoded(), Base64.getDecoder().decode(encodedPublic)));
       ObjectOutputStream publicKeyOS = new ObjectOutputStream(new FileOutputStream(publicKeyFile));
       publicKeyOS.writeObject(key.getPublic());
       publicKeyOS.close();
@@ -80,6 +104,38 @@ public class Encryption {
       ObjectOutputStream privateKeyOS = new ObjectOutputStream(new FileOutputStream(privateKeyFile));
       privateKeyOS.writeObject(key.getPrivate());
       privateKeyOS.close();
+   }
+
+   /**
+    * Stores the clients public key in the default location
+    *
+    * @param encodedPublicKey the encoded public key of the client
+    * @param clientId         the id of the client
+    *
+    * @throws IOException if there was an issue while saving the key
+    */
+   public static void storeClientPublicKey(byte[] encodedPublicKey, int clientId) throws IOException {
+      PublicKey publicClientKey = new PublicKey() {
+         @Override
+         public String getAlgorithm() {
+            return ALGORITHM;
+         }
+
+         @Override
+         public String getFormat() {
+            return FORMAT;
+         }
+
+         @Override
+         public byte[] getEncoded() {
+            return Base64.getDecoder().decode(encodedPublicKey);
+         }
+      };
+      File clientPublicKeyFile = new File(PUBLIC_KEY_CLIENT_DIRECTORY + "/PC" + clientId + ".key");
+
+      ObjectOutputStream publicKeyOS = new ObjectOutputStream(new FileOutputStream(clientPublicKeyFile));
+      publicKeyOS.writeObject(publicClientKey);
+      publicKeyOS.close();
    }
 
 
@@ -98,6 +154,25 @@ public class Encryption {
       return false;
    }
 
+   public static PublicKey getPublicKey() throws IOException, ClassNotFoundException {
+      ObjectInputStream inputStream = new ObjectInputStream(new FileInputStream(PUBLIC_KEY_FILE));
+      PublicKey publicKey = (PublicKey) inputStream.readObject();
+      return publicKey;
+   }
+
+   public static PrivateKey getPrivateKey() throws IOException, ClassNotFoundException {
+      ObjectInputStream inputStream = new ObjectInputStream(new FileInputStream(PRIVATE_KEY_FILE));
+      PrivateKey privateKey = (PrivateKey) inputStream.readObject();
+      return privateKey;
+   }
+
+   public static PublicKey getClientPublicKey(int clientId) throws IOException, ClassNotFoundException {
+      ObjectInputStream inputStream =
+              new ObjectInputStream(new FileInputStream(PUBLIC_KEY_CLIENT_DIRECTORY + "/PC" + clientId + ".key"));
+      PublicKey publicKey = (PublicKey) inputStream.readObject();
+      return publicKey;
+   }
+
    /**
     * Encrypt the plain text using public key.
     *
@@ -105,7 +180,6 @@ public class Encryption {
     * @param key  :The public key
     *
     * @return Encrypted text
-    *
     */
    public static byte[] encrypt(String text, PublicKey key)
            throws NoSuchPaddingException, NoSuchAlgorithmException, BadPaddingException, IllegalBlockSizeException,
@@ -126,7 +200,6 @@ public class Encryption {
     * @param key  :The private key
     *
     * @return plain text
-    *
     */
    public static String decrypt(byte[] text, PrivateKey key)
            throws NoSuchPaddingException, NoSuchAlgorithmException, BadPaddingException, IllegalBlockSizeException,
