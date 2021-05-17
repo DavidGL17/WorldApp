@@ -10,6 +10,7 @@ import ch.world.app.client.background.util.HashMapChaining;
 import ch.world.app.client.background.world.Article;
 import ch.world.app.client.background.world.World;
 import ch.world.app.client.background.world.articles.events.Accord;
+import ch.world.app.util.json.TypeOfArticle;
 
 import java.sql.*;
 import java.util.ArrayList;

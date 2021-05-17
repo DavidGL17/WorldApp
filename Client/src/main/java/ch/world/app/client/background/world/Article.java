@@ -6,11 +6,12 @@
 package ch.world.app.client.background.world;
 
 import ch.world.app.client.background.util.HashMapChaining;
-import ch.world.app.client.background.world.articles.*;
 import ch.world.app.client.background.world.articles.Character;
+import ch.world.app.client.background.world.articles.*;
 import ch.world.app.client.background.world.articles.events.Accord;
 import ch.world.app.client.background.world.articles.events.AccordType;
 import ch.world.app.client.background.world.articles.events.War;
+import ch.world.app.util.json.TypeOfArticle;
 
 import java.sql.*;
 import java.util.ArrayList;

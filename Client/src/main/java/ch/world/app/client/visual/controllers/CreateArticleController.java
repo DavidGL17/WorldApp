@@ -14,6 +14,7 @@ import ch.world.app.client.background.world.articles.events.AccordType;
 import ch.world.app.client.background.world.articles.events.War;
 import ch.world.app.client.visual.Controller;
 import ch.world.app.client.visual.util.Util;
+import ch.world.app.util.json.TypeOfArticle;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;

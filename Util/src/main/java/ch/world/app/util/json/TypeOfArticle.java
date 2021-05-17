@@ -3,7 +3,7 @@
  * @Authors : David González León,
  * @Date 25 déc. 2020
  */
-package ch.world.app.client.background.world.articles;
+package ch.world.app.util.json;
 
 public enum TypeOfArticle {
    ACCORD("Accord"), ACCORD_TYPE("Accord type"), ALPHABET("Alphabet"), CHARACTER("Character"), CONTINENT("Continent"),

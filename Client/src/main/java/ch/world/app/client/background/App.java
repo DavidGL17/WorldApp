@@ -11,7 +11,7 @@ import ch.world.app.client.background.util.HashMapChaining;
 import ch.world.app.client.background.util.Util;
 import ch.world.app.client.background.world.Article;
 import ch.world.app.client.background.world.World;
-import ch.world.app.client.background.world.articles.TypeOfArticle;
+import ch.world.app.util.json.TypeOfArticle;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

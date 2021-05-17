@@ -7,6 +7,7 @@ package ch.world.app.client.background.world.articles;
 
 import ch.world.app.client.background.world.Article;
 import ch.world.app.client.background.world.World;
+import ch.world.app.util.json.TypeOfArticle;
 
 import java.sql.Date;
 
